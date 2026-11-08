@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Personal University</title>
+<style>
+:root{--bg:#080b17;--panel:rgba(18,23,44,.78);--stroke:rgba(255,255,255,.08);--stroke2:rgba(255,255,255,.18);--text:#e8ebff;--muted:#8a93b8;--accent:#7c8cff;--accent2:#22d3ee;--good:#4ade80;--warn:#fbbf24}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(1200px 600px at 15% -10%,#1a2150 0,transparent 60%),radial-gradient(900px 500px at 100% 0,#10304a 0,transparent 55%),var(--bg);color:var(--text);font:15px/1.55 Inter,"Segoe UI",system-ui,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:52px 24px 90px}
+h1{font-size:38px;margin:0 0 4px;letter-spacing:-.5px;background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+.sub{color:var(--muted);font-size:17px;margin:0 0 30px}
+h2.sec{margin:54px 0 14px;font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
+h2.sec:after{content:"";flex:1;height:1px;background:var(--stroke)}
+a{color:inherit}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid var(--stroke2);background:rgba(255,255,255,.05);color:var(--text);text-decoration:none;font:inherit;font-size:14px;cursor:pointer;transition:background .15s,border-color .15s}
+.btn:hover{background:rgba(255,255,255,.1);border-color:var(--accent)}
+.btn.primary{background:linear-gradient(135deg,#4f46e5,#0ea5e9);border-color:transparent;font-weight:600}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.sm{padding:4px 10px;font-size:12.5px;border-radius:8px}
+.hero{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+@media (max-width:860px){.hero{grid-template-columns:1fr}}
+.panel{border:1px solid var(--stroke);border-radius:16px;background:var(--panel);padding:20px 22px}
+.panel h3{margin:0 0 6px;font-size:18px}
+.panel p{margin:6px 0;color:#b6bdde;font-size:14px}
+.start{border-color:rgba(124,140,255,.5);background:linear-gradient(135deg,rgba(79,70,229,.18),rgba(14,165,233,.08))}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.small{font-size:12.5px;color:var(--muted)}
+/* progress */
+.bar{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa);width:0;transition:width .3s}
+.big{font-size:34px;font-weight:700;letter-spacing:-1px}
+/* course map */
+.term{margin:0 0 22px}
+.term>h3{margin:0 0 4px;font-size:18px}
+.term>p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.unit{border:1px solid var(--stroke);border-radius:14px;background:var(--panel);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.unit.avail{border-color:rgba(124,140,255,.4)}
+.unit .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.unit h4{margin:0;font-size:15.5px}
+.wk{font-size:12px;color:var(--muted);white-space:nowrap}
+.unit .topics{font-size:13px;color:var(--muted)}
+.chip{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid var(--stroke2);color:var(--muted)}
+.chip.go{color:var(--good);border-color:rgba(74,222,128,.5)}
+.deliv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.deliv label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#b6bdde;padding:5px 8px;border:1px solid var(--stroke);border-radius:8px;cursor:pointer;user-select:none}
+.deliv label.done{color:var(--good);border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
+.deliv input{accent-color:#4ade80}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.links a{font-size:12.5px;color:var(--accent2);text-decoration:none;border-bottom:1px dotted rgba(34,211,238,.5)}
+.links a:hover{color:#fff}
+.later{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.later div{border:1px solid var(--stroke);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.025);font-size:13.5px}
+.later b{display:block;margin-bottom:3px}
+.later span{color:var(--muted)}
+/* diagnostic result */
+textarea{width:100%;min-height:58px;background:#0a0e1d;color:var(--text);border:1px solid var(--stroke2);border-radius:10px;padding:8px 10px;font:12px ui-monospace,Consolas,monospace}
+.dg{display:grid;grid-template-columns:150px 1fr 44px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.dg .bar{margin:0}
+.dg.weak .bar i{background:linear-gradient(90deg,#f87171,#fbbf24)}
+details summary{cursor:pointer;color:var(--accent2)}
+/* labs grid (existing) */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{position:relative;display:flex;flex-direction:column;border:1px solid var(--stroke);border-radius:16px;background:var(--panel);overflow:hidden;text-decoration:none;color:inherit;transition:transform .15s,border-color .15s,box-shadow .15s}
+.card.live:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 12px 40px rgba(80,100,255,.2)}
+.card.soon{opacity:.6}
+.art{height:130px;border-bottom:1px solid var(--stroke);background:#0b1024}
+.art svg{width:100%;height:100%;display:block}
+.body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:5px;flex:1}
+.body h2{margin:0;font-size:18px}.body p{margin:0;color:var(--muted);font-size:13.5px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.tags span{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--stroke2);color:var(--muted)}
+.badge{position:absolute;top:10px;right:10px;font-size:11.5px;padding:3px 10px;border-radius:999px;background:rgba(8,11,23,.8);border:1px solid var(--stroke2)}
+.live .badge{color:var(--good);border-color:rgba(74,222,128,.5)}.soon .badge{color:var(--muted)}
+.how{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.how div{border:1px solid var(--stroke);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.025);font-size:13.5px}
+.how b{display:block;color:var(--accent2);margin-bottom:2px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Personal University</h1>
+  <p class="sub">Engineering &amp; science from first principles — about 20 hours a week, theory, simulators and experiments together.</p>
+
+  <div class="hero">
+    <div class="panel start">
+      <h3>Start here: Week 0 diagnostic</h3>
+      <p>44 problems across 11 topics, about 2–3 hours, self-checking. It shows exactly where the rust is, and the first term is shaped from the result.</p>
+      <p class="small">Work on paper first, answer in the notebook, then run <code>report()</code> at the end and paste the result line below.</p>
+      <div class="row">
+        <a class="btn primary" id="startBtn" href="learn/notebooks/notebooks/index.html?path=year1/w00-diagnostic.ipynb" target="_blank">Open the diagnostic notebook ↗</a>
+        <a class="btn" href="learn/notebooks/lab/index.html" target="_blank">All notebooks (workspace) ↗</a>
+        <a class="btn" href="learn/notebooks/notebooks/index.html?path=00-setup-check.ipynb" target="_blank">Environment check ↗</a>
+      </div>
+      <p class="small" style="margin-top:12px">The notebook runs Python (numpy, sympy, matplotlib) entirely in your browser. The first start downloads ~30 MB and takes a little while. <b>Your work is stored in this browser</b> — use <i>File → Download</i> now and then to keep a copy.</p>
+    </div>
+    <div class="panel">
+      <h3>Your progress</h3>
+      <div class="big" id="pct">0%</div>
+      <div class="bar"><i id="pbar"></i></div>
+      <p class="small" id="pdetail">0 of 0 deliverables complete</p>
+      <div class="row">
+        <button class="btn sm" id="exp">Export</button>
+        <button class="btn sm" id="imp">Import</button>
+        <button class="btn sm" id="rst">Reset</button>
+      </div>
+      <input type="file" id="impf" accept=".json" hidden>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <h3>Diagnostic result</h3>
+    <div id="dgOut"><p class="small">Paste the line printed by <code>report()</code> at the end of the notebook:</p>
+      <textarea id="dgIn" placeholder='{"diag": {"Algebra": [4, 5, 5], ...}}'></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn sm" id="dgGo">Show result</button></div></div>
+  </div>
+
+  <h2 class="sec">Course map — Year 1</h2>
+  <div id="map"></div>
+
+  <h2 class="sec">Each unit has three deliverables</h2>
+  <div class="how">
+    <div><b>1 · Notebook</b>Theory from first principles. Key steps are left for you to derive; checks tell you if you are right.</div>
+    <div><b>2 · Problems</b>A graded set. Easy ones self-check; harder ones you send to your tutor to mark and explain.</div>
+    <div><b>3 · Experiment</b><i>Predict → run → verify.</i> You write what you expect <u>before</u> running a simulator, then check it against the maths.</div>
+    <div><b>Rule</b>The simulators are for testing your understanding, not for learning from scratch. Derive first, simulate second.</div>
+  </div>
+
+  <h2 class="sec">Beyond year 1 <span class="small">(shaped by your progress)</span></h2>
+  <div class="later">
+    <div><b>Mathematics</b><span>Differential equations, numerical methods, probability &amp; statistics, optimisation</span></div>
+    <div><b>Physics</b><span>Electromagnetism, thermodynamics, waves, modern physics</span></div>
+    <div><b>Electrical engineering</b><span>Circuit theory, electronics, signals &amp; systems, control, embedded systems</span></div>
+    <div><b>Mechanical engineering</b><span>Dynamics, materials, mechanisms, robotics, fluid mechanics</span></div>
+    <div><b>Computational science</b><span>Numerical simulation, finite elements, optimisation, machine learning</span></div>
+    <div><b>Systems &amp; economics</b><span>Business and economic modelling — a natural link to your ERP background</span></div>
+  </div>
+
+  <h2 class="sec">Laboratories (interactive simulators)</h2>
+<div class="grid">
+    <a class="card live" href="voltaic/index.html">
+      <span class="badge">● Live</span>
+      <div class="art"><svg viewBox="0 0 320 150"><g fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M30 100H80M80 100l8-22 12 44 12-44 12 44 12-44 8 22H190" stroke="#22d3ee"/>
+        <path d="M190 100v-40m-12 0h24m-18 -10h12M190 100v28" stroke="#a78bfa"/>
+        <path d="M190 128H290V60H230" stroke="#4ade80" stroke-dasharray="2 8"/>
+        <circle cx="290" cy="60" r="8" stroke="#fbbf24"/><path d="M230 60l-6-8v16z" fill="#7c8cff" stroke="#7c8cff"/></g></svg></div>
+      <div class="body"><h2>Voltaic</h2><p>Electronics and embedded systems. Draw circuits, simulate in real time and program an ESP32 or Arduino board inside the simulation.</p>
+        <div class="tags"><span>MNA solver</span><span>Oscilloscope</span><span>Microcontroller</span><span>CSV export</span></div></div>
+    </a>
+
+    <a class="card live" href="robotics/index.html">
+      <span class="badge">● Live</span>
+      <div class="art"><svg viewBox="0 0 320 150"><g stroke-linecap="round" fill="none">
+        <path d="M40 120H110" stroke="#2c3566" stroke-width="6"/>
+        <path d="M75 120L135 60L215 88" stroke="#22d3ee" stroke-width="10"/>
+        <circle cx="75" cy="120" r="9" fill="#0b1024" stroke="#a78bfa" stroke-width="3"/><circle cx="135" cy="60" r="8" fill="#0b1024" stroke="#a78bfa" stroke-width="3"/>
+        <circle cx="215" cy="88" r="6" fill="#fbbf24"/>
+        <path d="M75 120L100 40L180 40" stroke="#7c8cff" stroke-width="2" stroke-dasharray="3 6"/>
+        <circle cx="250" cy="55" r="9" stroke="#4ade80" stroke-width="2"/><circle cx="250" cy="55" r="2" fill="#4ade80"/>
+        <path d="M200 120q20-40 50-65" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="2 5"/></g></svg></div>
+      <div class="body"><h2>Robotics Lab</h2><p>Motors, servos and control. A two-joint arm with real rigid-body dynamics, PID tuning, sensor noise and loop-rate effects.</p>
+        <div class="tags"><span>Dynamics</span><span>Inverse kinematics</span><span>PID</span><span>ESP32 code export</span></div></div>
+    </a>
+
+    <a class="card live" href="physics/index.html"><span class="badge">● Live</span>
+      <div class="art"><svg viewBox="0 0 320 150"><g fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 120q60-120 120 0" stroke="#22d3ee" stroke-dasharray="2 6"/><path d="M20 120q60-120 120 0" stroke="#22d3ee" opacity=".3"/><circle cx="240" cy="75" r="44" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4 5"/><circle cx="240" cy="75" r="8" fill="#fbbf24" stroke="none"/><circle cx="284" cy="75" r="6" fill="#7dd3fc" stroke="none"/><path d="M60 30l20 20M200 20l30 30" stroke="#4ade80" stroke-width="2"/></g></svg></div>
+      <div class="body"><h2>Physics Lab</h2><p>Mechanics and electromagnetism: projectiles, chaos, resonance, orbits, charged particles and electric fields.</p>
+        <div class="tags"><span>6 experiments</span><span>Chaos</span><span>Kepler</span><span>Lorentz force</span></div></div></a>
+
+    <div class="card soon"><span class="badge">Planned</span>
+      <div class="art"><svg viewBox="0 0 320 150"><path d="M30 100Q120 20 200 70T300 60" fill="none" stroke="#22d3ee" stroke-width="3"/><path d="M150 80l50-20-8 24z" fill="#a78bfa"/></svg></div>
+      <div class="body"><h2>Flight Lab</h2><p>Aerodynamics and flight dynamics.</p></div></div>
+
+    <div class="card soon"><span class="badge">Planned</span>
+      <div class="art"><svg viewBox="0 0 320 150"><path d="M20 120L120 120L200 30L300 30" fill="none" stroke="#4ade80" stroke-width="3"/><path d="M20 120L120 120L200 120L300 120" stroke="#2c3566" stroke-dasharray="4 4" fill="none"/></svg></div>
+      <div class="body"><h2>Markets Lab</h2><p>Options and portfolio risk.</p></div></div>
+
+    <div class="card soon"><span class="badge">Planned</span>
+      <div class="art"><svg viewBox="0 0 320 150"><circle cx="90" cy="75" r="26" fill="none" stroke="#fbbf24" stroke-width="3"/><circle cx="230" cy="40" r="20" fill="none" stroke="#22d3ee" stroke-width="3"/><circle cx="230" cy="112" r="20" fill="none" stroke="#a78bfa" stroke-width="3"/><path d="M116 70L210 44M116 82L212 108M230 60v32" stroke="#7c8cff" stroke-width="2" fill="none"/></svg></div>
+      <div class="body"><h2>Systems Lab</h2><p>Business and economic modelling.</p></div></div>
+  </div>
+
+  <p class="small" style="margin-top:40px">Each laboratory has its own calculation engine; the controls, graphs, theory panels and file formats are shared.</p>
+</main>
+<script src="learn/curriculum.js"></script>
+<script>
+(function () {
+  const KEY = 'uni.progress.v1', DKEY = 'uni.diag.v1', $ = s => document.querySelector(s);
+  let prog = {}; try { prog = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(prog)); } catch (e) { } };
+  const NB = 'learn/notebooks/notebooks/index.html?path=';
+  const DEL = [['nb', 'Notebook'], ['pr', 'Problems'], ['ex', 'Experiment']];
+
+  function render() {
+    let total = 0, done = 0, html = '';
+    for (const t of CURRICULUM) {
+      html += `<div class="term"><h3>${t.title}</h3><p>${t.desc}</p><div class="units">`;
+      for (const u of t.units) {
+        const p = prog[u.id] || {}, has = u.notebook ? true : false;
+        const dels = u.deliverables || ['nb', 'pr', 'ex'];
+        html += `<div class="unit ${has ? 'avail' : ''}"><div class="top"><h4>${u.title}</h4><span class="wk">${u.weeks}</span></div>`;
+        html += `<div class="topics">${u.topics}</div>`;
+        html += `<div class="links">${has ? `<a href="${NB}${u.notebook}" target="_blank">Open notebook ↗</a>` : '<span class="chip">notebook planned</span>'}${(u.labs || []).map(l => `<a href="${l[1]}" target="_blank">${l[0]} ↗</a>`).join('')}</div>`;
+        html += `<div class="deliv">${DEL.filter(d => dels.includes(d[0])).map(d => { total++; const on = !!p[d[0]]; if (on) done++; return `<label class="${on ? 'done' : ''}"><input type="checkbox" data-u="${u.id}" data-d="${d[0]}" ${on ? 'checked' : ''}>${d[1]}</label>`; }).join('')}</div></div>`;
+      }
+      html += '</div></div>';
+    }
+    $('#map').innerHTML = html;
+    const pc = total ? Math.round(done / total * 100) : 0; $('#pct').textContent = pc + '%'; $('#pbar').style.width = pc + '%'; $('#pdetail').textContent = `${done} of ${total} deliverables complete`;
+    document.querySelectorAll('#map input[type=checkbox]').forEach(c => c.onchange = () => { const u = c.dataset.u; (prog[u] = prog[u] || {})[c.dataset.d] = c.checked; save(); render(); });
+  }
+  render();
+
+  $('#exp').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ uni: 1, progress: prog, diag: JSON.parse(localStorage.getItem(DKEY) || 'null') }, null, 1)], { type: 'application/json' })); a.download = 'university-progress.json'; a.click(); URL.revokeObjectURL(a.href); };
+  $('#imp').onclick = () => $('#impf').click();
+  $('#impf').onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const o = JSON.parse(r.result); if (!o.uni) throw 0; prog = o.progress || {}; save(); if (o.diag) localStorage.setItem(DKEY, JSON.stringify(o.diag)); render(); showDiag(); } catch (x) { alert('Not a progress file'); } }; r.readAsText(f); e.target.value = ''; };
+  $('#rst').onclick = () => { if (confirm('Reset all progress marks on this page? (Notebooks are not affected.)')) { prog = {}; save(); render(); } };
+
+  function showDiag() {
+    let d = null; try { d = JSON.parse(localStorage.getItem(DKEY)); } catch (e) { }
+    if (!d) return;
+    const rows = Object.entries(d).map(([t, v]) => ({ t, got: v[0], tried: v[1], n: v[2] }));
+    $('#dgOut').innerHTML = rows.map(r => { const p = r.got / r.n; return `<div class="dg ${r.tried === r.n && p < .7 ? 'weak' : ''}"><span>${r.t}</span><div class="bar"><i style="width:${p * 100}%"></i></div><span>${r.got}/${r.n}</span></div>`; }).join('') + `<div class="row"><button class="btn sm" id="dgClear">Replace result</button></div><p class="small">Send this to your tutor to shape Term 1. Red bars are the areas to focus on first.</p>`;
+    $('#dgClear').onclick = () => { localStorage.removeItem(DKEY); location.reload(); };
+  }
+  $('#dgGo').onclick = () => { try { const o = JSON.parse($('#dgIn').value.trim()); if (!o.diag) throw 0; localStorage.setItem(DKEY, JSON.stringify(o.diag)); showDiag(); } catch (e) { alert('That does not look like the report() line.'); } };
+  showDiag();
+})();
+</script>
+</body>
+</html>

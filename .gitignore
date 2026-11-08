@@ -1,0 +1,8 @@
+# built JupyterLite site (~69 MB) - regenerate with learn/tools/build.sh
+learn/notebooks/
+.jupyterlite.doit.db
+__pycache__/
+*.pyc
+diagnostic-results.json
+u01-results.json
+u01-errors.json

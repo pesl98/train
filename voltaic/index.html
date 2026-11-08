@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voltaic — Circuit Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <a class="home" href="../index.html" title="All laboratories">⌂</a>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" width="22" height="22"><defs><linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><path fill="url(#bg1)" d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>
+      <b>Voltaic</b>
+    </div>
+    <div class="group">
+      <button id="btnRun" class="btn primary" title="Run / pause (Space)"></button>
+      <button id="btnStep" class="btn icon" title="Single step"></button>
+      <button id="btnReset" class="btn icon" title="Reset simulation"></button>
+    </div>
+    <div class="group speed" title="Simulated time per real second">
+      <label>Speed</label>
+      <input id="speed" type="range" min="0" max="1000" value="500">
+      <span id="speedLbl" class="mono"></span>
+    </div>
+    <div id="timeLbl" class="mono time">t = 0 s</div>
+    <div id="status" class="pill"></div>
+    <div class="spacer"></div>
+    <select id="examples" title="Load an example circuit"></select>
+    <div class="group">
+      <button id="btnUndo" class="btn icon" title="Undo (Ctrl+Z)"></button>
+      <button id="btnRedo" class="btn icon flip" title="Redo (Ctrl+Y)"></button>
+      <button id="btnFit" class="btn icon" title="Fit to view (Home)"></button>
+    </div>
+    <div class="group">
+      <button id="btnNew" class="btn icon" title="New empty circuit"></button>
+      <button id="btnSave" class="btn icon" title="Export circuit (.json)"></button>
+      <button id="btnLoad" class="btn icon" title="Import circuit (.json)"></button>
+      <button id="btnTheory" class="btn" title="Equations behind the simulation">Theory</button>
+      <button id="btnCsv" class="btn" title="Export scope data (.csv)">CSV</button>
+      <button id="btnPng" class="btn icon" title="Export image (.png)"></button>
+    </div>
+  </header>
+
+  <aside id="palette"></aside>
+
+  <main id="stage">
+    <canvas id="cv"></canvas>
+    <div id="hint">Drag parts from the left · drag from a pin to draw wire · <kbd>R</kbd> rotate · <kbd>Del</kbd> delete · <kbd>Space</kbd> run/pause · scroll to zoom</div>
+    <div id="inspector" class="glass"></div>
+    <div id="scope" class="glass">
+      <div class="scope-head">
+        <b>Oscilloscope</b>
+        <div id="scopeLegend"></div>
+        <button id="btnScope" class="btn icon small" title="Collapse"></button>
+      </div>
+      <canvas id="sc"></canvas>
+    </div>
+    <div id="toasts"></div>
+  </main>
+</div>
+<div id="editor" class="modal hidden">
+  <div class="modal-card glass">
+    <div class="mhead">
+      <b id="edTitle">Sketch</b>
+      <select id="edExamples"></select>
+      <div class="spacer"></div>
+      <button id="edClose" class="btn small" title="Close (Esc)">✕</button>
+    </div>
+    <div class="mbody">
+      <textarea id="edText" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <div class="api">
+        <h5>Arduino API (JavaScript)</h5>
+        <code>pinMode(pin, OUTPUT | INPUT | INPUT_PULLUP)</code>
+        <code>digitalWrite(pin, HIGH | LOW)</code>
+        <code>digitalRead(pin)</code>
+        <code>analogRead(pin)</code>
+        <code>analogWrite(pin, 0–255)</code>
+        <code>delay(ms) · delayMicroseconds(us)</code>
+        <code>millis() · micros()</code>
+        <code>Serial.println(x) · Serial.print(x)</code>
+        <code>map · constrain · random</code>
+        <h5>Notes</h5>
+        <p>Pins are numbered 0–7 as on the board. Write <code>function setup()</code> and <code>function loop()</code>.</p>
+        <p><code>delay()</code> works directly inside <code>setup</code> / <code>loop</code>; helper functions can't wait.</p>
+        <p>Outputs are 25 Ω drivers, inputs read high above half the supply voltage.</p>
+      </div>
+    </div>
+    <div class="mfoot">
+      <div id="edMsg"></div>
+      <div class="spacer"></div>
+      <span class="hintk"><kbd>Ctrl</kbd>+<kbd>Enter</kbd></span>
+      <button id="edApply" class="btn primary">Upload &amp; restart</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="file" accept=".json,application/json" hidden>
+<script src="../shared/theory.js"></script>
+<script src="sim.js"></script>
+<script src="theory.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
