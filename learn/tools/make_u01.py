@@ -172,7 +172,7 @@ M(r'''
 
 &nbsp;
 
-**Physics link (strand, 1 h):** open the [Physics Lab](/physics/index.html), choose *Oscillators*, and read off the period for a few amplitudes. Does a small-angle approximation hold? You will prove why in Unit 4.
+**Physics link (strand, 1 h):** open the [Physics Lab](../../../physics/index.html), choose *Oscillators*, and read off the period for a few amplitudes. Does a small-angle approximation hold? You will prove why in Unit 4.
 ''')
 
 # ------------------------------------------------------------------ WEEK 2
