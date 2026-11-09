@@ -1,0 +1,23 @@
+{
+  "name": "Personal University of Engineering & Science",
+  "short_name": "Pers. University",
+  "description": "A self-built curriculum: course map, in-browser Jupyter notebooks, and interactive simulators (Voltaic, Robotics, Physics).",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#080b17",
+  "theme_color": "#080b17",
+  "categories": ["education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Voltaic circuit simulator", "url": "voltaic/index.html" },
+    { "name": "Physics Lab", "url": "physics/index.html" },
+    { "name": "Robotics Lab", "url": "robotics/index.html" }
+  ]
+}

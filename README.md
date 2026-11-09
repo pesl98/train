@@ -30,3 +30,9 @@ Notes: edits you make in JupyterLite live in browser storage (use File > Downloa
 
 ## Curriculum
 Year 1: Term 0 diagnostic, Term 1 calculus rebuilt, Term 2 ODEs / linear algebra / dynamics, Term 3 circuits & signals. See `learn/curriculum.js`.
+
+## Install as an app (PWA)
+Open the hub in Chrome or Edge (from `http://localhost:5178/` or any https host) and choose **Install** in the address bar. The hub and the three labs then work offline, including the maths typesetting (KaTeX). The notebooks work offline after you have opened a notebook once while online: JupyterLite caches itself and the Python runtime as it loads (`jupyter-lite.json` sets `enableServiceWorkerCache`).
+
+- `manifest.webmanifest`, `sw.js`, `shared/pwa.js`, `icons/` (regenerate with `learn/tools/make_icons.py`).
+- After changing app files, bump `VERSION` in `sw.js` so installed copies refresh (they also refresh in the background on the next visit).
