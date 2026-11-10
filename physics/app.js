@@ -493,7 +493,8 @@ cv.onpointerup = e => { if (E.pointer) { const r = cv.getBoundingClientRect(); E
 
 /* ---- save / load / CSV ---- */
 const snapshot = () => ({ lab: 'physics', v: 1, exp: curId, P, extra: E.save ? E.save(S) : null });
-function persist() { try { localStorage.setItem('physics.v1', JSON.stringify(snapshot())); } catch (e) { } }
+let deepLinked = false;   // opened with #exp=... (e.g. embedded in a notebook): do not overwrite the user's saved set-up
+function persist() { if (deepLinked) return; try { localStorage.setItem('physics.v1', JSON.stringify(snapshot())); } catch (e) { } }
 function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); URL.revokeObjectURL(a.href); }
 function toast(m) { const e = $('#toast'); e.textContent = m; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), 1800); }
 function applySnap(o) { curId = o.exp in EXPS ? o.exp : 'proj'; E = EXPS[curId]; $('#exp').value = curId; P = { ...defaults(E), ...o.P }; scenName = ''; buildSide(); fillScen(); startRun(o.extra); }
@@ -513,7 +514,7 @@ let boot = null; try { const o = JSON.parse(localStorage.getItem('physics.v1'));
 /* deep link, used by the notebooks:  physics/index.html#exp=osc&F0=0&c=0  (optional scen=<scenario name>, then any parameter id) */
 function fromHash() {
   const q = new URLSearchParams(location.hash.slice(1)), id = q.get('exp'); if (!(id in EXPS)) return false;
-  selectExp(id, q.get('scen') || undefined); let ch = false;
+  deepLinked = true; selectExp(id, q.get('scen') || undefined); let ch = false;
   E.params.forEach(a => { if (q.has(a[0])) { const v = parseFloat(q.get(a[0])); if (isFinite(v)) { P[a[0]] = Math.min(a[3], Math.max(a[2], v)); ch = true; } } });
   if (ch) { buildSide(); startRun(); persist(); }
   return true;

@@ -24,7 +24,12 @@ const CURRICULUM = [
           { id: 'u01w2', title: 'Week 2 — Identities, inverse trig, sinusoids', path: 'year1/u01w2-identities-sinusoids.ipynb' },
           { id: 'u01w3', title: 'Week 3 — Limits and continuity', path: 'year1/u01w3-limits-continuity.ipynb' },
         ], topics: 'Function families and graphs, radians, unit circle, trig identities, inverse trig, limits and continuity. Daily 15-minute drill on the unit circle and identities.', labs: [LAB.phys] },
-      { id: 'u2', title: 'Derivatives', weeks: 'weeks 4–7', topics: 'Definition, power/product/quotient/chain rules, trig/exp/log derivatives, implicit differentiation, optimisation, velocity and acceleration. Four weeks: 2/6 in the diagnostic.', labs: [LAB.phys] },
+      { id: 'u2', title: 'Derivatives', weeks: 'weeks 4–7', notebooks: [
+          { id: 'u02w1', title: 'Week 4 — The derivative from first principles', path: 'year1/u02w1-derivative-definition.ipynb' },
+          { id: 'u02w2', title: 'Week 5 — The rules: product, quotient, chain', path: 'year1/u02w2-rules-of-differentiation.ipynb' },
+          { id: 'u02w3', title: 'Week 6 — Implicit, related rates, Newton’s method', path: 'year1/u02w3-implicit-rates-newton.ipynb' },
+          { id: 'u02w4', title: 'Week 7 — Maxima, minima and optimisation', path: 'year1/u02w4-optimisation.ipynb' },
+        ], topics: 'Definition, power/product/quotient/chain rules, trig/exp/log derivatives, implicit differentiation, optimisation, velocity and acceleration. Four weeks: 2/6 in the diagnostic.', labs: [LAB.phys, LAB.volt] },
       { id: 'u3', title: 'Integrals', weeks: 'weeks 8–10', topics: 'Riemann sums, fundamental theorem, substitution, by parts, work and energy as integrals.', labs: [LAB.volt, LAB.phys] },
       { id: 'u4', title: 'Series & Taylor expansions', weeks: 'weeks 11–12', topics: 'Taught from scratch: convergence, geometric series, power series, Taylor polynomials, small-angle approximation.', labs: [LAB.phys] },
       { id: 'p1', title: 'Physics strand (parallel, 3 h/week)', weeks: 'weeks 1–12', topics: 'Units and dimensional analysis, vectors in physics, kinematics, Newton\'s laws, energy, Ohm and Kirchhoff. Light on maths; grows as calculus arrives.', labs: [LAB.phys, LAB.volt] },

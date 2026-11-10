@@ -151,7 +151,8 @@ function restore(s) {
 function undo() { if (hi > 0) { hi--; restore(hist[hi]); save(); updateUndoButtons(); } }
 function redo() { if (hi < hist.length - 1) { hi++; restore(hist[hi]); save(); updateUndoButtons(); } }
 function updateUndoButtons() { $('#btnUndo').disabled = hi <= 0; $('#btnRedo').disabled = hi >= hist.length - 1; }
-function save() { try { localStorage.setItem('voltaic.v1', JSON.stringify({ s: snapStr(), ts: timescale })); } catch (e) { } }
+let deepLinked = false;   // opened as  voltaic/index.html#preset=<key>  (e.g. embedded in a notebook): do not overwrite the user's saved circuit
+function save() { if (deepLinked) return; try { localStorage.setItem('voltaic.v1', JSON.stringify({ s: snapStr(), ts: timescale })); } catch (e) { } }
 function loadSaved() {
   try {
     const o = JSON.parse(localStorage.getItem('voltaic.v1'));
@@ -1133,7 +1134,9 @@ function init() {
   new ResizeObserver(() => { resize(); }).observe($('#stage'));
   window.addEventListener('resize', resize);
   resize();
-  if (loadSaved()) { rebuild(); fitView(); resetHistory(); } else loadPreset('rc');
+  const hp = new URLSearchParams(location.hash.slice(1)).get('preset');
+  if (hp && PRESETS[hp]) { deepLinked = true; loadPreset(hp); }
+  else if (loadSaved()) { rebuild(); fitView(); resetHistory(); } else loadPreset('rc');
   renderInspector(); setStatus();
   requestAnimationFrame(frame);
   window.__voltaic = { get circ() { return circ; }, get sim() { return sim; }, loadPreset, get cam() { return cam; } };
