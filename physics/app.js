@@ -510,7 +510,16 @@ addEventListener('keydown', e => { if (e.key === ' ' && e.target === document.bo
 
 /* ---- boot ---- */
 let boot = null; try { const o = JSON.parse(localStorage.getItem('physics.v1')); if (o && o.lab === 'physics' && o.exp in EXPS) boot = o; } catch (e) { }
-if (boot) applySnap(boot); else selectExp('proj');
+/* deep link, used by the notebooks:  physics/index.html#exp=osc&F0=0&c=0  (optional scen=<scenario name>, then any parameter id) */
+function fromHash() {
+  const q = new URLSearchParams(location.hash.slice(1)), id = q.get('exp'); if (!(id in EXPS)) return false;
+  selectExp(id, q.get('scen') || undefined); let ch = false;
+  E.params.forEach(a => { if (q.has(a[0])) { const v = parseFloat(q.get(a[0])); if (isFinite(v)) { P[a[0]] = Math.min(a[3], Math.max(a[2], v)); ch = true; } } });
+  if (ch) { buildSide(); startRun(); persist(); }
+  return true;
+}
+if (!fromHash()) { if (boot) applySnap(boot); else selectExp('proj'); }
+addEventListener('hashchange', fromHash);
 let last = performance.now();
 function frame(now) {
   const dt = (now - last) / 1000; last = now;

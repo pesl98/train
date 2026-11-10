@@ -1,7 +1,9 @@
 /* Year 1 curriculum map — data only. The hub (index.html) renders this.
    Shaped by the Week 0 diagnostic (17/44): strong algebra and exp/log; weak trig, derivatives, integrals;
    series, complex numbers and physics start from zero. Edit freely as progress suggests.
-   A unit with `notebook` gets an "Open notebook" link; `labs` link to simulators. */
+   A unit with `notebooks` gets one link per notebook: { id, title, path }. `id` is the notebook's own id
+   (the hub reads its saved results `<id>-results.json` from the browser storage of JupyterLite and shows the score).
+   A unit with a single `notebook` path gets a plain "Open notebook" link; `labs` link to simulators. */
 const LAB = {
   volt: ['Voltaic', 'voltaic/index.html'],
   phys: ['Physics Lab', 'physics/index.html'],
@@ -17,7 +19,11 @@ const CURRICULUM = [
   {
     title: 'Term 1 — Calculus rebuilt', desc: 'Weeks 1–12. Rhythm per week (20 h): 6 reading, 6 paper problems, 3 notebook/simulator, 3 physics strand, 2 error review.',
     units: [
-      { id: 'u1', title: 'Functions, trig & limits', weeks: 'weeks 1–3', notebook: 'year1/u01-functions-trig-limits.ipynb', topics: 'Function families and graphs, radians, unit circle, trig identities, inverse trig, limits and continuity. Daily 15-minute drill on the unit circle and identities.', labs: [LAB.phys] },
+      { id: 'u1', title: 'Functions, trig & limits', weeks: 'weeks 1–3', notebooks: [
+          { id: 'u01w1', title: 'Week 1 — Functions, radians, the unit circle', path: 'year1/u01w1-functions-radians-circle.ipynb' },
+          { id: 'u01w2', title: 'Week 2 — Identities, inverse trig, sinusoids', path: 'year1/u01w2-identities-sinusoids.ipynb' },
+          { id: 'u01w3', title: 'Week 3 — Limits and continuity', path: 'year1/u01w3-limits-continuity.ipynb' },
+        ], topics: 'Function families and graphs, radians, unit circle, trig identities, inverse trig, limits and continuity. Daily 15-minute drill on the unit circle and identities.', labs: [LAB.phys] },
       { id: 'u2', title: 'Derivatives', weeks: 'weeks 4–7', topics: 'Definition, power/product/quotient/chain rules, trig/exp/log derivatives, implicit differentiation, optimisation, velocity and acceleration. Four weeks: 2/6 in the diagnostic.', labs: [LAB.phys] },
       { id: 'u3', title: 'Integrals', weeks: 'weeks 8–10', topics: 'Riemann sums, fundamental theorem, substitution, by parts, work and energy as integrals.', labs: [LAB.volt, LAB.phys] },
       { id: 'u4', title: 'Series & Taylor expansions', weeks: 'weeks 11–12', topics: 'Taught from scratch: convergence, geometric series, power series, Taylor polynomials, small-angle approximation.', labs: [LAB.phys] },

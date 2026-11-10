@@ -21,8 +21,10 @@ jobs:
       - name: Build notebooks (JupyterLite)
         run: |
           python -m venv jl
-          jl/bin/pip install -q jupyterlite-core==0.8.7 jupyterlite-pyodide-kernel==0.8.7 jupyter-server nbformat sympy numpy
+          jl/bin/pip install -q jupyterlite-core==0.8.7 jupyterlite-pyodide-kernel==0.8.7 jupyter-server nbformat sympy numpy matplotlib ipywidgets==8.1.9 nbclient ipykernel
           JL=jl/bin sh learn/tools/build.sh
+      - name: Test notebooks (every answer key, hint and experiment is executed)
+        run: jl/bin/python learn/tools/test_notebooks.py
       - name: Assemble site
         run: |
           mkdir _site

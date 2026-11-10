@@ -5,7 +5,7 @@
    - /learn/notebooks/ is NOT handled here: JupyterLite registers its own service worker
      (with enableServiceWorkerCache) that caches the notebook app and the Pyodide runtime.
    Bump VERSION whenever you want clients to drop old caches. */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = 'pu-shell-' + VERSION;
 const EXT = 'pu-ext-' + VERSION;
 const KATEX = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/';
