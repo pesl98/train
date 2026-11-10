@@ -53,21 +53,22 @@ class Book:
         self.cells.append(c); self.nfig += 1
 
     # ---- questions
-    def ask(self, text, kind, answer, why, nudge='', fmt=None):
+    def ask(self, text, kind, answer, why, nudge='', fmt=None, sample=None):
+        """sample: for kind 'anti' (answer = the integrand) a correct antiderivative, used by the tests."""
         n = len(self.Q) + 1
         f = fmt or FMT[kind]
         self.Q[str(n)] = {'k': kind, 'a': answer, 'why': why.strip(), 'nudge': nudge.strip(), 'f': f}
         self.md('> **Check yourself %d.** %s\n>\n> *Answer:* %s' % (n, text.strip().replace('\n', '\n> '), f))
-        self.code('ask(%d, ...)' % n, ref='ask(%d, %s)' % (n, _lit(kind, answer)))
+        self.code('ask(%d, ...)' % n, ref='ask(%d, %s)' % (n, _lit(kind, answer, sample)))
 
-    def problem(self, sec, text, kind, answer, hints=(), solution='', fmt=None, ref=None):
+    def problem(self, sec, text, kind, answer, hints=(), solution='', fmt=None, ref=None, sample=None):
         n = len(self.P) + 1
         if sec not in self.secs: self.secs.append(sec)
         f = fmt or FMT[kind]
         assert solution.strip(), 'problem %d needs a worked solution' % n
         self.P[str(n)] = {'k': kind, 'a': answer, 'sec': sec, 'h': [h_.strip() for h_ in hints], 's': solution.strip(), 'f': f}
         self.md('**Problem %d.** %s\n\n*Answer:* %s' % (n, text.strip(), f))
-        self.code('check(%d, ...)' % n, ref=ref or 'check(%d, %s)' % (n, _lit(kind, answer)))
+        self.code('check(%d, ...)' % n, ref=ref or 'check(%d, %s)' % (n, _lit(kind, answer, sample)))
 
     # ---- output
     def setup_source(self):
@@ -103,6 +104,9 @@ class Book:
             self.path, len(self.cells), len(self.P), len(self.Q), self.nfig, os.path.getsize(p) // 1024))
 
 
-def _lit(kind, a):
+def _lit(kind, a, sample=None):
     if kind == 'fn': raise ValueError('fn problems need an explicit ref=')
+    if kind == 'anti':
+        assert sample, "kind 'anti' needs sample= (a correct antiderivative) for the tests"
+        return repr(sample)
     return repr(a)

@@ -367,3 +367,10 @@ def compare(f, fprime, lo=-3.0, hi=3.0):
     lim = np.nanpercentile(np.abs(np.concatenate([num[ok], mine[ok]])), 98) * 1.3 + 0.5 if ok.any() else 5
     plt.ylim(-lim, lim); plt.axhline(0, color='k', lw=0.8); plt.legend(fontsize=9, loc='upper right'); plt.show()
     print('✓ They agree: your derivative matches the numerical slope.' if err < 1e-4 else '✗ They differ (largest relative difference %.3g). Re-check your working.' % err)
+
+
+def nint(f, a, b, n=20000):
+    """Numerical value of the definite integral of f from a to b (midpoint rule with n strips).
+    Use it to CHECK an integral you worked out by hand:  nint(lambda v: v**2, 0, 1)  ->  0.3333..."""
+    xs = a + (np.arange(n) + 0.5) * (b - a) / n
+    return float(np.sum(f(xs) * np.ones(n)) * (b - a) / n)
