@@ -94,6 +94,8 @@ class Book:
         return nb
 
     def write(self):
+        blob = json.dumps([self.P, self.Q]) + ''.join(c['source'] for c in self.cells if c is not None and c['cell_type'] == 'markdown')
+        assert "\\\\'" not in blob and "\\'" not in blob, self.id + ": found \\' in text - use a double-quoted raw string instead of escaping the quote"
         p = os.path.join(OUT, self.path)
         os.makedirs(os.path.dirname(p), exist_ok=True)
         nbf.write(self.notebook(), p)

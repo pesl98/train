@@ -343,3 +343,27 @@ def drill_check(ans):
         print('%2d. %s(%s) = %+.4f   ' % (i, f, _plabel(a), v) + ('✓' if ok else '✗ (you said %+.4f)' % _num(g)))
     print('\nScore %d/%d' % (s, len(qs)))
     _S['drills'].append([str(datetime.date.today()), s, len(qs)]); _save()
+
+
+# ----------------------------------------------------------------- calculus helpers (Unit 2 onwards)
+def nderiv(f, x0, h=1e-5):
+    """Numerical derivative of f at x0 (central difference). Works on numbers and on numpy arrays."""
+    return (f(x0 + h) - f(x0 - h)) / (2 * h)
+
+
+def compare(f, fprime, lo=-3.0, hi=3.0):
+    """Test a derivative you worked out by hand:  compare(f, your_derivative).
+    Plots the numerical slope of f and your formula; if they coincide, your derivative is (almost certainly) right.
+    Write both with v as the variable, e.g.  compare(lambda v: v**2 * sin(v), lambda v: 2*v*sin(v) + v**2*cos(v))"""
+    xs = np.linspace(lo, hi, 600)
+    num = nderiv(f, xs)
+    mine = np.asarray(fprime(xs), dtype=float) * np.ones_like(xs)
+    ok = np.isfinite(num) & np.isfinite(mine)
+    err = float(np.max(np.abs(num[ok] - mine[ok]) / (1 + np.abs(num[ok])))) if ok.any() else float('nan')
+    plt.figure(figsize=(8, 3.4))
+    plt.plot(xs, f(xs), color='0.7', label='f')
+    plt.plot(xs, num, lw=6, alpha=0.3, color='C0', label='numerical slope of f')
+    plt.plot(xs, mine, 'r--', lw=1.6, label='your formula')
+    lim = np.nanpercentile(np.abs(np.concatenate([num[ok], mine[ok]])), 98) * 1.3 + 0.5 if ok.any() else 5
+    plt.ylim(-lim, lim); plt.axhline(0, color='k', lw=0.8); plt.legend(fontsize=9, loc='upper right'); plt.show()
+    print('✓ They agree: your derivative matches the numerical slope.' if err < 1e-4 else '✗ They differ (largest relative difference %.3g). Re-check your working.' % err)
