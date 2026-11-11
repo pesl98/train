@@ -30,7 +30,11 @@ const CURRICULUM = [
           { id: 'u02w3', title: 'Week 6 — Implicit, related rates, Newton’s method', path: 'year1/u02w3-implicit-rates-newton.ipynb' },
           { id: 'u02w4', title: 'Week 7 — Maxima, minima and optimisation', path: 'year1/u02w4-optimisation.ipynb' },
         ], topics: 'Definition, power/product/quotient/chain rules, trig/exp/log derivatives, implicit differentiation, optimisation, velocity and acceleration. Four weeks: 2/6 in the diagnostic.', labs: [LAB.phys, LAB.volt] },
-      { id: 'u3', title: 'Integrals', weeks: 'weeks 8–10', topics: 'Riemann sums, fundamental theorem, substitution, by parts, work and energy as integrals.', labs: [LAB.volt, LAB.phys] },
+      { id: 'u3', title: 'Integrals', weeks: 'weeks 8–10', notebooks: [
+          { id: 'u03w1', title: 'Week 8 — The integral and the fundamental theorem', path: 'year1/u03w1-integral-fundamental-theorem.ipynb' },
+          { id: 'u03w2', title: 'Week 9 — Techniques of integration', path: 'year1/u03w2-techniques-of-integration.ipynb' },
+          { id: 'u03w3', title: 'Week 10 — Applications: area, volume, RMS, energy', path: 'year1/u03w3-applications-of-integration.ipynb' },
+        ], topics: 'Riemann sums, fundamental theorem, substitution, by parts, work and energy as integrals.', labs: [LAB.volt, LAB.phys] },
       { id: 'u4', title: 'Series & Taylor expansions', weeks: 'weeks 11–12', topics: 'Taught from scratch: convergence, geometric series, power series, Taylor polynomials, small-angle approximation.', labs: [LAB.phys] },
       { id: 'p1', title: 'Physics strand (parallel, 3 h/week)', weeks: 'weeks 1–12', topics: 'Units and dimensional analysis, vectors in physics, kinematics, Newton\'s laws, energy, Ohm and Kirchhoff. Light on maths; grows as calculus arrives.', labs: [LAB.phys, LAB.volt] },
     ],
