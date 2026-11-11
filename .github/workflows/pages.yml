@@ -31,6 +31,10 @@ jobs:
           cp -r index.html manifest.webmanifest sw.js icons shared voltaic robotics physics _site/
           mkdir -p _site/learn
           cp -r learn/curriculum.js learn/notebooks _site/learn/
+      - name: Password gate
+        env:
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+        run: python3 learn/tools/make_gate.py _site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

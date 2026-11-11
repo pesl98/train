@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script src="shared/gate.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Personal University</title>
@@ -116,6 +117,7 @@ details summary{cursor:pointer;color:var(--accent2)}
         <button class="btn sm" id="exp">Export</button>
         <button class="btn sm" id="imp">Import</button>
         <button class="btn sm" id="rst">Reset</button>
+        <button class="btn sm" id="lock" hidden>Lock</button>
       </div>
       <input type="file" id="impf" accept=".json" hidden>
     </div>
@@ -260,6 +262,7 @@ details summary{cursor:pointer;color:var(--accent2)}
   $('#exp').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ uni: 1, progress: prog, notebooks: RES, diag: JSON.parse(localStorage.getItem(DKEY) || 'null') }, null, 1)], { type: 'application/json' })); a.download = 'university-progress.json'; a.click(); URL.revokeObjectURL(a.href); };
   $('#imp').onclick = () => $('#impf').click();
   $('#impf').onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const o = JSON.parse(r.result); if (!o.uni) throw 0; prog = o.progress || {}; save(); if (o.diag) localStorage.setItem(DKEY, JSON.stringify(o.diag)); render(); showDiag(); } catch (x) { alert('Not a progress file'); } }; r.readAsText(f); e.target.value = ''; };
+  if (window.PUGate && PUGate.active) { $('#lock').hidden = false; $('#lock').onclick = PUGate.lock; }
   $('#rst').onclick = () => { if (confirm('Reset all progress marks on this page? (Notebooks are not affected.)')) { prog = {}; save(); render(); } };
 
   function showDiag() {

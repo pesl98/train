@@ -48,3 +48,9 @@ Open the hub in Chrome or Edge (from `http://localhost:5178/` or any https host)
 
 - `manifest.webmanifest`, `sw.js`, `shared/pwa.js`, `icons/` (regenerate with `learn/tools/make_icons.py`).
 - After changing app files, bump `VERSION` in `sw.js` so installed copies refresh (they also refresh in the background on the next visit).
+
+## Password gate
+The deployed site shows a password screen (`shared/gate.js`) before any page. It is a **soft gate**: GitHub Pages serves static files, so it keeps visitors and search engines out of the interface but does not hide direct file URLs.
+- The committed `gate.js` is switched off (empty hash). The deploy workflow runs `learn/tools/make_gate.py`, which writes a salted PBKDF2 hash of the repository secret `SITE_PASSWORD` into the deployed copy and adds the script to every notebook page. The password itself is never in the repo or the site.
+- Set or change the password: GitHub → Settings → Secrets and variables → Actions → `SITE_PASSWORD`, then re-run the *Deploy to GitHub Pages* workflow. Everyone is asked again.
+- Without the secret the workflow warns and deploys ungated. The hub has a **Lock** button to forget the password in the current browser.
