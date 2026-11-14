@@ -17,7 +17,7 @@ Open http://localhost:5178/
 | `learn/tools/nbkit.py`, `unilib.py` | Notebook generator kit, and the runtime embedded in every notebook (`check`, `hint`, `solution`, `ask`, `report`, `explore`, `lab`) |
 | `learn/tools/build_notebooks.py`, `test_notebooks.py`, `build.sh` | Generate the notebooks, test them, build the JupyterLite site |
 | `learn/content/` | Notebook contents served by JupyterLite (unit notebooks are generated here, not committed) |
-| `voltaic/` | Circuit simulator (MNA engine, ESP32/Arduino part, Theory panel, CSV export) |
+| `voltaic/` | Circuit simulator (MNA engine, ESP32/Arduino part, Theory panel, CSV export). Sketches are **Arduino C++ (a teaching subset)** translated to JavaScript by `voltaic/cpp.js` — not compiled; tests: `node voltaic/test/cpp.test.js` |
 | `robotics/` | Robotics lab (2R arm, PID, IK) |
 | `physics/` | Physics lab (6 experiments) |
 | `shared/theory.js` | Reusable KaTeX + SVG Theory panel |

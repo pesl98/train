@@ -35,15 +35,16 @@ const BOARDS = {
   esp32: { name: 'ESP32', vcc: 3.3, bits: 12, pin: 'GPIO' },
   uno:   { name: 'Arduino Uno', vcc: 5, bits: 10, pin: 'D' },
 };
+const CPP = (typeof translateCpp === 'function') ? { isCpp, translateCpp } : require('./cpp.js');   // cpp.js: Arduino C++ -> JavaScript
 const SKETCHES = {
   blink: `// Blink an LED on pin 3
-const LED = 3;
+const int LED = 3;
 
-function setup() {
+void setup() {
   pinMode(LED, OUTPUT);
 }
 
-function loop() {
+void loop() {
   digitalWrite(LED, HIGH);
   delay(500);
   digitalWrite(LED, LOW);
@@ -51,19 +52,19 @@ function loop() {
 }
 `,
   button: `// Hold a button (pin 7, wired to GND) to light the LED (pin 3)
-const LED = 3, BTN = 7;
-let wasPressed = false;
+const int LED = 3, BTN = 7;
+bool wasPressed = false;
 
-function setup() {
+void setup() {
   pinMode(LED, OUTPUT);
   pinMode(BTN, INPUT_PULLUP);   // pin reads HIGH until the button pulls it to GND
   Serial.begin(115200);
 }
 
-function loop() {
-  const pressed = digitalRead(BTN) === LOW;
+void loop() {
+  bool pressed = digitalRead(BTN) == LOW;
   digitalWrite(LED, pressed ? HIGH : LOW);
-  if (pressed !== wasPressed) {
+  if (pressed != wasPressed) {
     Serial.println(pressed ? "button pressed" : "button released");
     wasPressed = pressed;
   }
@@ -71,14 +72,14 @@ function loop() {
 }
 `,
   fade: `// Breathing LED using PWM (analogWrite takes 0-255)
-const LED = 3;
-let level = 0, step = 5;
+const int LED = 3;
+int level = 0, step = 5;
 
-function setup() {
+void setup() {
   pinMode(LED, OUTPUT);
 }
 
-function loop() {
+void loop() {
   analogWrite(LED, level);
   level += step;
   if (level <= 0 || level >= 255) step = -step;
@@ -87,17 +88,46 @@ function loop() {
 `,
   adc: `// Read a voltage on pin 2 and show it on the serial monitor.
 // The LED on pin 3 gets brighter as the input rises.
-function setup() {
+// ESP32: 12-bit ADC (0..4095), 3.3 V.   Arduino Uno: 10-bit (0..1023), 5 V - change the two numbers below.
+const int ADC_MAX = 4095;
+const float VREF = 3.3;
+
+void setup() {
   pinMode(3, OUTPUT);
   Serial.begin(115200);
 }
 
-function loop() {
-  const raw = analogRead(2);                 // 0 .. 4095 (ESP32) or 0 .. 1023 (Uno)
-  const max = BOARD_ADC_MAX;
-  Serial.println("ADC = " + raw + "   " + (raw / max * VCC).toFixed(2) + " V");
-  analogWrite(3, raw / max * 255);
+void loop() {
+  int raw = analogRead(2);
+  float volts = raw * VREF / ADC_MAX;
+  Serial.print("ADC = ");
+  Serial.print(raw);
+  Serial.print("   ");
+  Serial.print(volts, 2);
+  Serial.println(" V");
+  analogWrite(3, raw * 255 / ADC_MAX);
   delay(250);
+}
+`,
+  helper: `// Your own functions can call delay() too.
+const int LED = 3;
+
+void blinkTimes(int n, int ms) {
+  for (int i = 0; i < n; i++) {
+    digitalWrite(LED, HIGH);
+    delay(ms);
+    digitalWrite(LED, LOW);
+    delay(ms);
+  }
+}
+
+void setup() {
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  blinkTimes(3, 100);   // three quick blinks ...
+  delay(1000);          // ... then a pause
 }
 `,
 };
@@ -122,34 +152,49 @@ class Mcu {
   read(g) { const n = this.el.ix[g + 2]; return n >= 0 ? this.sim.x[n] : 0; }
   compile() {
     const self = this, B = this.board;
-    const fmt = x => (typeof x === 'number' && !Number.isInteger(x)) ? String(+x.toFixed(4)) : String(x);
+    const fmt = x => typeof x === 'boolean' ? (x ? '1' : '0') : (typeof x === 'number' && !Number.isInteger(x)) ? String(+x.toFixed(4)) : String(x);
+    const fmtD = (x, d) => {          // Serial.print(x, d): d = digits for decimals, or HEX / BIN / OCT / DEC for integers
+      if (d && d.base) return Math.trunc(+x).toString(d.base).toUpperCase();
+      if (typeof d === 'number' && isFinite(+x)) return (+x).toFixed(Math.max(0, Math.min(10, d)));
+      return fmt(x);
+    };
+    const pwmBits = {};
     const api = {
-      INPUT: 0, OUTPUT: 1, INPUT_PULLUP: 2, HIGH: 1, LOW: 0, PI: Math.PI, VCC: B.vcc, BOARD_ADC_MAX: (1 << B.bits) - 1,
+      INPUT: 0, OUTPUT: 1, INPUT_PULLUP: 2, HIGH: 1, LOW: 0, PI: Math.PI, TWO_PI: 2 * Math.PI, HALF_PI: Math.PI / 2, LED_BUILTIN: 2,
+      VCC: B.vcc, BOARD_ADC_MAX: (1 << B.bits) - 1, HEX: { base: 16 }, BIN: { base: 2 }, OCT: { base: 8 }, DEC: { base: 10 }, F: s => s,
       pinMode(p, m) { p = self.pin(p); self.mode[p] = m; if (m !== 1) self.pwm[p] = -1; self.dirty = true; },
       digitalWrite(p, v) { p = self.pin(p); self.out[p] = v ? 1 : 0; self.pwm[p] = -1; self.dirty = true; },
       digitalRead(p) { p = self.pin(p); return self.read(p) > self.vcc * 0.5 ? 1 : 0; },
       analogRead(p) { p = self.pin(p); const m = (1 << self.board.bits) - 1; return Math.max(0, Math.min(m, Math.round(self.read(p) / self.vcc * m))); },
       analogWrite(p, v) { p = self.pin(p); self.mode[p] = 1; self.pwm[p] = Math.max(0, Math.min(1, v / 255)); self.dirty = true; },
-      millis() { return self.sim.t * 1000; },
-      micros() { return self.sim.t * 1e6; },
+      millis() { return Math.floor(self.sim.t * 1000); },
+      micros() { return Math.floor(self.sim.t * 1e6); },
+      ledcAttach(p, f, bits) { p = self.pin(p); pwmBits[p] = bits || 8; self.mode[p] = 1; self.dirty = true; return 1; },
+      ledcWrite(p, v) { p = self.pin(p); const m = (1 << (pwmBits[p] || 8)) - 1; self.mode[p] = 1; self.pwm[p] = Math.max(0, Math.min(1, v / m)); self.dirty = true; },
       map: (x, a, b, c, d) => (x - a) * (d - c) / (b - a) + c,
       constrain: (x, a, b) => Math.max(a, Math.min(b, x)),
       random: (a, b) => b === undefined ? Math.floor(Math.random() * a) : a + Math.floor(Math.random() * (b - a)),
-      abs: Math.abs, min: Math.min, max: Math.max, sqrt: Math.sqrt, sin: Math.sin, cos: Math.cos, pow: Math.pow, floor: Math.floor, round: Math.round,
+      abs: Math.abs, min: Math.min, max: Math.max, sqrt: Math.sqrt, sin: Math.sin, cos: Math.cos, tan: Math.tan, atan2: Math.atan2, log: Math.log, exp: Math.exp,
+      pow: Math.pow, floor: Math.floor, ceil: Math.ceil, round: Math.round, fabs: Math.abs, sq: x => x * x, radians: x => x * Math.PI / 180, degrees: x => x * 180 / Math.PI,
       Serial: {
         begin() { },
-        print(x) { self.cur += fmt(x); },
-        println(x = '') { self.cur += fmt(x); self.serial.push(self.cur); self.cur = ''; if (self.serial.length > 200) self.serial.shift(); },
+        print(x, d) { self.cur += d === undefined ? fmt(x) : fmtD(x, d); },
+        println(x = '', d) { self.cur += d === undefined ? fmt(x) : fmtD(x, d); self.serial.push(self.cur); self.cur = ''; if (self.serial.length > 200) self.serial.shift(); },
       },
     };
     const names = Object.keys(api);
-    let src = String(this.c.p.code || '')
-      .replace(/function\s+(setup|loop)\s*\(/g, 'function* $1(')
-      .replace(/\bdelayMicroseconds\s*\(/g, 'yield 0.001*(')
-      .replace(/\bdelay\s*\(/g, 'yield (')
-      .replace(/\bwhile\s*\(/g, 'while(__g(),');
+    let src = String(this.c.p.code || '');
+    if (CPP.isCpp(src)) {            // Arduino C++ (a teaching subset): translate to JavaScript first
+      try { src = CPP.translateCpp(src); } catch (e) { this.fail(e); return; }
+    } else {                         // JavaScript sketch (older circuits)
+      src = src.replace(/function\s+(setup|loop)\s*\(/g, 'function* $1(')
+        .replace(/\bdelayMicroseconds\s*\(/g, 'yield 0.001*(')
+        .replace(/\bdelay\s*\(/g, 'yield (')
+        .replace(/\bwhile\s*\(/g, 'while(__g(),');
+    }
     try {
-      const f = new Function(...names, '__g', src + '\n;return {setup: typeof setup==="function"?setup:null, loop: typeof loop==="function"?loop:null};');
+      // the sketch lives in its own function scope, so it may declare names that the runtime also provides (PI, map, ...)
+      const f = new Function(...names, '__g', 'return (function(){' + src + '\n;return {setup: typeof setup==="function"?setup:null, loop: typeof loop==="function"?loop:null};})();');
       this.fns = f(...names.map(n => api[n]), () => { if (++self.guard > 300000) throw new Error('Loop ran too long without delay()'); });
       this.gen = this.fns.setup ? this.fns.setup() : null;
       if (!this.gen) { this.phase = 'loop'; this.gen = this.fns.loop ? this.fns.loop() : null; }
@@ -157,7 +202,10 @@ class Mcu {
   }
   fail(e) {
     let m = e && e.message ? e.message : String(e);
+    let r;
     if (/yield/.test(m)) m = 'delay() can only be used directly inside setup() or loop()';
+    else if ((r = /^(\w+) is not defined$/.exec(m))) m = "'" + r[1] + "' is not declared: check the spelling. Libraries and functions outside the simulator's Arduino subset are not available";
+    else if (e instanceof SyntaxError) m = 'syntax error: ' + m;
     this.err = m; this.gen = null;
     this.sim.warn = this.c.name + ': ' + m;
   }
@@ -696,4 +744,4 @@ class Sim {
   }
 }
 
-if (typeof module !== 'undefined') module.exports = { Sim, SKETCHES, BOARDS, DEFS, GRID, fmtEng, parseVal, termPos, buildNet };
+if (typeof module !== 'undefined') module.exports = { Sim, Mcu, SKETCHES, BOARDS, DEFS, GRID, fmtEng, parseVal, termPos, buildNet };

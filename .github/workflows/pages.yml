@@ -25,6 +25,8 @@ jobs:
           JL=jl/bin sh learn/tools/build.sh
       - name: Test notebooks (every answer key, hint and experiment is executed)
         run: jl/bin/python learn/tools/test_notebooks.py
+      - name: Test the Arduino C++ translator
+        run: node voltaic/test/cpp.test.js
       - name: Assemble site
         run: |
           mkdir _site

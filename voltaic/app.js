@@ -890,7 +890,12 @@ function openEditor(c) {
   $('#edTitle').textContent = c.name + ' — sketch';
   $('#edText').value = c.p.code || '';
   $('#editor').classList.remove('hidden');
-  edMsg(); $('#edText').focus();
+  edLang(); edMsg(); $('#edText').focus();
+}
+function edLang() { const t = $('#edText').value; $('#edLang').textContent = CPP.isCpp(t) ? 'C++' : 'JavaScript'; $('#edExport').hidden = !CPP.isCpp(t); }
+function exportSketch() {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([$('#edText').value], { type: 'text/plain' }));
+  a.download = ((edComp && edComp.name) || 'sketch').replace(/\W+/g, '_') + '.ino'; a.click(); URL.revokeObjectURL(a.href); toast('Sketch downloaded (.ino)');
 }
 function closeEditor() { $('#editor').classList.add('hidden'); edComp = null; }
 function edMsg() {
@@ -907,9 +912,10 @@ function applyEditor() {
 }
 function wireEditor() {
   const ex = $('#edExamples'); ex.innerHTML = '<option value="">Load example…</option>';
-  const names = { blink: 'Blink', button: 'Button → LED', fade: 'PWM fade', adc: 'Analog read + serial' };
+  const names = { blink: 'Blink', button: 'Button → LED', fade: 'PWM fade', adc: 'Analog read + serial', helper: 'Own function with delay()' };
   for (const k in SKETCHES) { const o = el('option', null, names[k] || k); o.value = k; ex.appendChild(o); }
-  ex.onchange = () => { if (ex.value) $('#edText').value = SKETCHES[ex.value]; ex.value = ''; };
+  ex.onchange = () => { if (ex.value) { $('#edText').value = SKETCHES[ex.value]; edLang(); } ex.value = ''; };
+  $('#edText').addEventListener('input', edLang); $('#edExport').onclick = exportSketch;
   $('#edClose').onclick = closeEditor; $('#edApply').onclick = applyEditor;
   $('#editor').addEventListener('pointerdown', e => { if (e.target.id === 'editor') closeEditor(); });
   $('#edText').addEventListener('keydown', e => {

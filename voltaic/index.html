@@ -70,27 +70,35 @@
   <div class="modal-card glass">
     <div class="mhead">
       <b id="edTitle">Sketch</b>
+      <span id="edLang" class="pill" title="Detected language of the sketch">C++</span>
       <select id="edExamples"></select>
       <div class="spacer"></div>
+      <button id="edExport" class="btn small" style="white-space:nowrap" title="Download the sketch as a .ino file for a real board">⭳ .ino</button>
       <button id="edClose" class="btn small" title="Close (Esc)">✕</button>
     </div>
     <div class="mbody">
       <textarea id="edText" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
       <div class="api">
-        <h5>Arduino API (JavaScript)</h5>
+        <h5>Arduino API</h5>
         <code>pinMode(pin, OUTPUT | INPUT | INPUT_PULLUP)</code>
         <code>digitalWrite(pin, HIGH | LOW)</code>
         <code>digitalRead(pin)</code>
         <code>analogRead(pin)</code>
         <code>analogWrite(pin, 0–255)</code>
+        <code>ledcAttach(pin, freq, bits)</code>
+        <code>ledcWrite(pin, duty)</code>
         <code>delay(ms) · delayMicroseconds(us)</code>
         <code>millis() · micros()</code>
-        <code>Serial.println(x) · Serial.print(x)</code>
-        <code>map · constrain · random</code>
+        <code>Serial.println(x) · Serial.print(x, digits | HEX)</code>
+        <code>map · constrain · random · min · max · abs · sqrt · pow · sin · cos</code>
+        <h5>Language: Arduino C++ (subset)</h5>
+        <p>Write <code>void setup()</code> and <code>void loop()</code> as on a real board. Your own functions may call <code>delay()</code>.</p>
+        <p><b>Works:</b> int/long/byte/bool/char/float/String variables, <code>const</code>, <code>#define NAME value</code>, 1-D arrays, if/for/while/do/switch, <code>?:</code>, casts, integer division like C++.</p>
+        <p><b>Not supported:</b> classes, structs, pointers, references, <code>static</code> locals, other libraries (WiFi, Wire…), interrupts, RTOS.</p>
         <h5>Notes</h5>
-        <p>Pins are numbered 0–7 as on the board. Write <code>function setup()</code> and <code>function loop()</code>.</p>
-        <p><code>delay()</code> works directly inside <code>setup</code> / <code>loop</code>; helper functions can't wait.</p>
-        <p>Outputs are 25 Ω drivers, inputs read high above half the supply voltage.</p>
+        <p>This is a <b>translator for a teaching subset</b>, not a compiler: the sketch runs on a simulated clock (about 20 µs per <code>loop()</code> pass), not cycle-accurate.</p>
+        <p>Pins are numbered 0–7. Outputs are 25 Ω drivers; inputs read high above half the supply voltage.</p>
+        <p>Older JavaScript sketches (<code>function setup()</code>) still run.</p>
       </div>
     </div>
     <div class="mfoot">
@@ -103,6 +111,7 @@
 </div>
 <input type="file" id="file" accept=".json,application/json" hidden>
 <script src="../shared/theory.js"></script>
+<script src="cpp.js"></script>
 <script src="sim.js"></script>
 <script src="theory.js"></script>
 <script src="app.js"></script>
