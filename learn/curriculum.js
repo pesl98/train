@@ -36,7 +36,10 @@ const CURRICULUM = [
           { id: 'u03w2', title: 'Week 9 — Techniques of integration', path: 'year1/u03w2-techniques-of-integration.ipynb' },
           { id: 'u03w3', title: 'Week 10 — Applications: area, volume, RMS, energy', path: 'year1/u03w3-applications-of-integration.ipynb' },
         ], topics: 'Riemann sums, fundamental theorem, substitution, by parts, work and energy as integrals.', labs: [LAB.volt, LAB.phys] },
-      { id: 'u4', title: 'Series & Taylor expansions', weeks: 'weeks 11–12', topics: 'Taught from scratch: convergence, geometric series, power series, Taylor polynomials, small-angle approximation.', labs: [LAB.phys] },
+      { id: 'u4', title: 'Series & Taylor expansions', weeks: 'weeks 11–12', notebooks: [
+          { id: 'u04w1', title: 'Week 11 — Sequences and infinite series', path: 'year1/u04w1-sequences-series.ipynb' },
+          { id: 'u04w2', title: 'Week 12 — Power series and Taylor expansions', path: 'year1/u04w2-power-taylor-series.ipynb' },
+        ], topics: 'Taught from scratch: convergence, geometric series, power series, Taylor polynomials, small-angle approximation.', labs: [LAB.phys] },
       { id: 'p1', title: 'Physics strand (parallel, 3 h/week)', weeks: 'weeks 1–12', topics: 'Units and dimensional analysis, vectors in physics, kinematics, Newton\'s laws, energy, Ohm and Kirchhoff. Light on maths; grows as calculus arrives.', labs: [LAB.phys, LAB.volt] },
     ],
   },
