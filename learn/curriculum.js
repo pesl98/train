@@ -8,6 +8,7 @@ const LAB = {
   volt: ['Voltaic', 'voltaic/index.html'],
   phys: ['Physics Lab', 'physics/index.html'],
   rob: ['Robotics Lab', 'robotics/index.html'],
+  ml: ['AI & ML Lab', 'ml/index.html'],
 };
 const CURRICULUM = [
   {
@@ -55,6 +56,16 @@ const CURRICULUM = [
     units: [
       { id: 'u11', title: 'AC steady state & RLC circuits', weeks: 'weeks 27–31', topics: 'Impedance, transient and steady-state response, resonance, filters, circuit analysis methods.', labs: [LAB.volt] },
       { id: 'u12', title: 'Fourier series & signals', weeks: 'weeks 32–36', topics: 'Periodic signals, harmonics, frequency content, first look at control.', labs: [LAB.volt, LAB.rob] },
+    ],
+  },
+  {
+    title: 'Track — AI & machine learning', desc: 'Planned alongside the maths: each unit pairs a notebook with the AI & ML Lab. It needs derivatives (Unit 2) and, from unit 2 of the track on, vectors and matrices (Unit 7).',
+    units: [
+      { id: 'ml1', title: 'Learning as optimisation', weeks: 'after Unit 2', topics: 'Models, loss functions, gradient descent and the learning rate; linear regression by hand and by descent.', labs: [LAB.ml] },
+      { id: 'ml2', title: 'The neuron and logistic regression', weeks: 'after Unit 3', topics: 'Sigmoid, cross-entropy, decision boundaries, feature engineering; why XOR needs more than one neuron.', labs: [LAB.ml] },
+      { id: 'ml3', title: 'Neural networks and back-propagation', weeks: 'after Unit 7', topics: 'Layers as matrix products, activation functions, the chain rule organised as back-propagation, universal approximation.', labs: [LAB.ml] },
+      { id: 'ml4', title: 'Training well', weeks: 'after Unit 8', topics: 'Optimisers (momentum, RMSProp, Adam), overfitting, test sets, regularisation, choosing a model.', labs: [LAB.ml] },
+      { id: 'ml5', title: 'Unsupervised learning', weeks: 'after Unit 8', topics: 'Clustering with k-means, distances, the elbow method; a first look at principal components (eigenvectors at work).', labs: [LAB.ml] },
     ],
   },
 ];

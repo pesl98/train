@@ -27,10 +27,12 @@ jobs:
         run: jl/bin/python learn/tools/test_notebooks.py
       - name: Test the Arduino C++ translator
         run: node voltaic/test/cpp.test.js
+      - name: Test the machine-learning core
+        run: node ml/test/nn.test.js
       - name: Assemble site
         run: |
           mkdir _site
-          cp -r index.html manifest.webmanifest sw.js icons shared voltaic robotics physics _site/
+          cp -r index.html manifest.webmanifest sw.js icons shared voltaic robotics physics ml _site/
           mkdir -p _site/learn
           cp -r learn/curriculum.js learn/notebooks _site/learn/
       - name: Password gate

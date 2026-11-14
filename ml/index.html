@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../shared/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI &amp; ML Lab</title>
+<style>
+:root{--bg:#080b17;--panel:rgba(18,23,44,.85);--stroke:rgba(255,255,255,.08);--stroke2:rgba(255,255,255,.18);--text:#e8ebff;--muted:#8a93b8;--accent:#7c8cff;--accent2:#22d3ee;--good:#4ade80;--warn:#fbbf24;--bad:#f87171;--mono:ui-monospace,"Cascadia Code",Consolas,monospace}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:13px/1.4 Inter,"Segoe UI",system-ui,sans-serif;overflow:hidden}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+#app{display:grid;height:100%;grid-template-rows:52px 1fr;grid-template-columns:1fr 340px}
+header{grid-column:1/3;display:flex;align-items:center;gap:10px;padding:0 14px;background:linear-gradient(180deg,#11172e,#0c1124);border-bottom:1px solid var(--stroke);overflow-x:auto}
+.home{color:var(--muted);text-decoration:none;font-size:18px;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;border:1px solid var(--stroke)}
+.home:hover{color:var(--text);background:rgba(255,255,255,.08)}
+.brand{font-size:16px;font-weight:700;background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;margin-right:4px;white-space:nowrap}
+.btn,select{font:inherit;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--stroke);border-radius:9px;height:32px;padding:0 12px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.1);border-color:var(--stroke2)}
+.btn.primary{background:linear-gradient(135deg,#4f46e5,#0ea5e9);border-color:transparent;font-weight:600;min-width:84px}
+select option{background:#151a33}
+.sp{flex:1}
+.pill{padding:3px 10px;border-radius:999px;font-size:12px;border:1px solid var(--stroke2);color:var(--muted);white-space:nowrap}
+.pill.ok{color:var(--good);border-color:rgba(74,222,128,.4)}.pill.warn{color:var(--warn);border-color:rgba(251,191,36,.45)}.pill.bad{color:var(--bad);border-color:rgba(248,113,113,.5)}
+#main{display:grid;grid-template-rows:1fr 240px;min-height:0;min-width:0}
+#view,#plots{width:100%;height:100%;display:block}
+#vwrap{position:relative;min-height:0}
+#plots{border-top:1px solid var(--stroke);background:#0a0e1d}
+#hud{position:absolute;right:12px;top:10px;color:var(--muted);font-size:12px;line-height:1.65;pointer-events:none;background:rgba(8,11,23,.72);border:1px solid var(--stroke);border-radius:9px;padding:6px 10px}
+#hud b{color:var(--text);font-weight:600}
+#side{overflow-y:auto;border-left:1px solid var(--stroke);background:var(--panel);padding:10px 14px 30px}
+#side h4{margin:16px 0 6px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+#side p.about{color:#b6bdde;font-size:12.5px;line-height:1.5;margin:4px 0 10px}
+#side ul{margin:4px 0;padding-left:18px;color:#b6bdde;font-size:12.5px;line-height:1.5}
+.row{display:grid;grid-template-columns:96px 1fr 64px;align-items:center;gap:8px;margin:4px 0}
+.row label{color:var(--muted);font-size:12px}
+.row input[type=range]{width:100%;accent-color:#7c8cff}
+.row output{font-family:var(--mono);font-size:11.5px;text-align:right;color:var(--accent2)}
+.row select{height:28px;padding:0 8px;grid-column:2/4}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1a2040;border:1px solid var(--stroke2);padding:8px 16px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+@media (max-width:900px){#app{grid-template-columns:1fr;grid-template-rows:52px 1fr 300px}#side{grid-column:1;border-left:0;border-top:1px solid var(--stroke)}}
+</style>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#080b17">
+<link rel="icon" type="image/png" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<script src="../shared/pwa.js"></script>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a class="home" href="../index.html" title="All laboratories">⌂</a>
+    <span class="brand">AI &amp; ML Lab</span>
+    <select id="exp" title="Choose an experiment"></select>
+    <button id="bRun" class="btn primary" title="Start / pause training (Space)">Pause</button>
+    <button id="bStep" class="btn" title="One training step">Step</button>
+    <button id="bReset" class="btn" title="Start again from new random weights">Reset</button>
+    <select id="speed" title="Training speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="10">10×</option></select>
+    <select id="scen" title="Things to try"></select>
+    <span id="status" class="pill">…</span>
+    <div class="sp"></div>
+    <button id="bTheory" class="btn">Theory</button>
+    <button id="bSave" class="btn">Save</button>
+    <button id="bLoad" class="btn">Load</button>
+    <button id="bCsv" class="btn">CSV</button>
+  </header>
+  <div id="main">
+    <div id="vwrap"><canvas id="view"></canvas><div id="hud" class="mono"></div></div>
+    <canvas id="plots"></canvas>
+  </div>
+  <aside id="side"></aside>
+</div>
+<div class="toast" id="toast"></div>
+<input type="file" id="file" accept=".json" hidden>
+<script src="../shared/theory.js"></script>
+<script src="nn.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

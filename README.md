@@ -20,6 +20,7 @@ Open http://localhost:5178/
 | `voltaic/` | Circuit simulator (MNA engine, ESP32/Arduino part, Theory panel, CSV export). Sketches are **Arduino C++ (a teaching subset)** translated to JavaScript by `voltaic/cpp.js` — not compiled; tests: `node voltaic/test/cpp.test.js` |
 | `robotics/` | Robotics lab (2R arm, PID, IK) |
 | `physics/` | Physics lab (6 experiments) |
+| `ml/` | AI & ML lab (6 experiments: gradient descent, one neuron, neural-network classifier, function fitting, optimiser race, k-means). Engine written from scratch in `ml/nn.js`; tests: `node ml/test/nn.test.js` |
 | `shared/theory.js` | Reusable KaTeX + SVG Theory panel |
 
 ## Build the in-browser notebooks
