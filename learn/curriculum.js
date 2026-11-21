@@ -46,7 +46,11 @@ const CURRICULUM = [
   {
     title: 'Term 2 — ODEs, linear algebra & dynamics', desc: 'Weeks 13–26. First-order ODEs now follow solid derivatives and integrals.',
     units: [
-      { id: 'u5', title: 'First-order ODEs & numerical solution', weeks: 'weeks 13–15', topics: 'Separable equations, exponential growth/decay, RC circuits, Euler vs Runge–Kutta, error and step size.', labs: [LAB.volt, LAB.phys] },
+      { id: 'u5', title: 'First-order ODEs & numerical solution', weeks: 'weeks 13–15', notebooks: [
+          { id: 'u05w1', title: 'Week 13 — Differential equations, separable equations', path: 'year1/u05w1-odes-separable.ipynb' },
+          { id: 'u05w2', title: 'Week 14 — Linear equations and RC circuits', path: 'year1/u05w2-linear-first-order.ipynb' },
+          { id: 'u05w3', title: 'Week 15 — Solving ODEs numerically', path: 'year1/u05w3-numerical-odes.ipynb' },
+        ], topics: 'Separable equations, exponential growth/decay, RC circuits, Euler vs Runge–Kutta, error and step size.', labs: [LAB.volt, LAB.phys] },
       { id: 'u6', title: 'Complex numbers & phasors', weeks: 'weeks 16–17', topics: 'Rectangular and polar form, Euler\'s formula, roots, impedance. Taught from scratch.', labs: [LAB.volt] },
       { id: 'u7', title: 'Vectors, matrices & linear systems', weeks: 'weeks 18–20', topics: 'Gaussian elimination, determinants, matrix algebra — the same method Voltaic uses to solve a circuit.', labs: [LAB.volt] },
       { id: 'u8', title: 'Eigenvalues & diagonalisation', weeks: 'weeks 21–22', topics: 'Eigenvectors, stability, normal modes of coupled oscillators.', labs: [LAB.phys] },
