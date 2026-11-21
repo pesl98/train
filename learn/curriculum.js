@@ -40,7 +40,12 @@ const CURRICULUM = [
           { id: 'u04w1', title: 'Week 11 — Sequences and infinite series', path: 'year1/u04w1-sequences-series.ipynb' },
           { id: 'u04w2', title: 'Week 12 — Power series and Taylor expansions', path: 'year1/u04w2-power-taylor-series.ipynb' },
         ], topics: 'Taught from scratch: convergence, geometric series, power series, Taylor polynomials, small-angle approximation.', labs: [LAB.phys] },
-      { id: 'p1', title: 'Physics strand (parallel, 3 h/week)', weeks: 'weeks 1–12', topics: 'Units and dimensional analysis, vectors in physics, kinematics, Newton\'s laws, energy, Ohm and Kirchhoff. Light on maths; grows as calculus arrives.', labs: [LAB.phys, LAB.volt] },
+      { id: 'p1', title: 'Physics strand (parallel, 3 h/week)', weeks: 'weeks 1–12', notebooks: [
+          { id: 'p01w1', title: 'Weeks 1–3 — Units, dimensions and vectors', path: 'year1/p01w1-units-dimensions-vectors.ipynb' },
+          { id: 'p01w2', title: 'Weeks 4–6 — Kinematics', path: 'year1/p01w2-kinematics.ipynb' },
+          { id: 'p01w3', title: 'Weeks 7–10 — Newton’s laws and energy', path: 'year1/p01w3-newton-energy.ipynb' },
+          { id: 'p01w4', title: 'Weeks 11–12 — Ohm and Kirchhoff', path: 'year1/p01w4-ohm-kirchhoff.ipynb' },
+        ], topics: 'Units and dimensional analysis, vectors in physics, kinematics, Newton\'s laws, energy, Ohm and Kirchhoff. Light on maths; grows as calculus arrives.', labs: [LAB.phys, LAB.volt] },
     ],
   },
   {

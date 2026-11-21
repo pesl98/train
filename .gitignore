@@ -10,6 +10,7 @@ _site/
 jl/
 # generated from learn/tools/units/*.py by learn/tools/build_notebooks.py (CI builds them)
 learn/content/year1/u[0-9]*.ipynb
+learn/content/year1/p[0-9]*.ipynb
 learn/content/year1/*-results.json
 learn/tools/.wheels/
 .cache/

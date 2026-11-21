@@ -13,7 +13,7 @@ Open http://localhost:5178/
 |---|---|
 | `index.html` | Hub: course map, progress tracking, diagnostic result |
 | `learn/curriculum.js` | Course map data (edit to reshape the curriculum) |
-| `learn/tools/units/` | **Notebook sources**: one Python file per weekly notebook (`u01w1.py` …) plus the figure code |
+| `learn/tools/units/` | **Notebook sources**: one Python file per weekly notebook (`u01w1.py` …, physics strand `p01w1.py` …) plus the figure code |
 | `learn/tools/nbkit.py`, `unilib.py` | Notebook generator kit, and the runtime embedded in every notebook (`check`, `hint`, `solution`, `ask`, `report`, `explore`, `lab`) |
 | `learn/tools/build_notebooks.py`, `test_notebooks.py`, `build.sh` | Generate the notebooks, test them, build the JupyterLite site |
 | `learn/content/` | Notebook contents served by JupyterLite (unit notebooks are generated here, not committed) |
