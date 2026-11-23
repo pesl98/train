@@ -50,7 +50,7 @@ def _load():
         with open(_FILE) as fh: s = json.load(fh)
     except Exception:
         s = {}
-    for k, d in (('p', {}), ('q', {}), ('drills', []), ('mistakes', [])): s.setdefault(k, d)
+    for k, d in (('p', {}), ('q', {}), ('s', {}), ('drills', []), ('mistakes', [])): s.setdefault(k, d)
     return s
 
 
@@ -63,8 +63,10 @@ def _summary():
     later = sum(1 for k in P if not _S['p'].get(k, {}).get('ok') and _S['p'].get(k, {}).get('later'))
     tried = sum(1 for k in P if k in _S['p'])
     qd = sum(1 for k in _D['q'] if _S['q'].get(k, {}).get('ok'))
-    return {'got': got, 'later': later, 'tried': tried, 'n': len(P), 'q': qd, 'nq': len(_D['q']),
-            'drills': len(_S['drills']), 'mistakes': len(_S['mistakes'])}
+    out = {'got': got, 'later': later, 'tried': tried, 'n': len(P), 'q': qd, 'nq': len(_D['q']),
+           'drills': len(_S['drills']), 'mistakes': len(_S['mistakes'])}
+    if _D.get('s'): out['start'] = [sum(1 for k in _D['s'] if _S['s'].get(k, {}).get('ok')), len(_D['s'])]
+    return out
 
 
 def _save():
@@ -142,9 +144,31 @@ def _blank(ans): return ans is None or ans is Ellipsis or (isinstance(ans, (list
 def _md(s): display(Markdown(s))
 
 
+# ----------------------------------------------------------------- known mistakes (misconception repair)
+def _trap(q, ans, n, where):
+    """If a wrong answer is a known mistake, explain that mistake and log it. Returns True if it was one."""
+    for val, txt in q.get('t') or []:
+        try:
+            hit = _correct(q['k'], ans, val)
+        except Exception:
+            hit = False
+        if hit:
+            _md('**Known mistake.** ' + txt)
+            note = 'auto (%s %s): %s' % (where, n, txt.split('. ')[0][:150])
+            if not any(m.get('note') == note for m in _S['mistakes']):
+                _S['mistakes'].append({'n': n, 'note': note, 'd': str(datetime.date.today()), 'auto': True})
+            return True
+    return False
+
+
+def _sure(v):
+    return None if v is None else bool(v)
+
+
 # ----------------------------------------------------------------- graded problems
-def check(n, ans=None):
-    """Mark your answer to Problem n. The FIRST attempt is the one that counts."""
+def check(n, ans=None, sure=None):
+    """Mark your answer to Problem n. The FIRST attempt is the one that counts.
+    Optional: sure=True / sure=False - how confident you were (report() uses it)."""
     k = str(n)
     if k not in _D['p']: print('There is no problem', n, 'in this notebook.'); return
     if _blank(ans): print('Replace the ... with your answer, then run the cell again.'); return
@@ -155,12 +179,14 @@ def check(n, ans=None):
         print('I could not read that answer (%s). Expected format: %s' % (err, q['f'])); return
     rec = _S['p'].get(k)
     if rec is None:
-        _S['p'][k] = {'ok': ok, 't': time.time(), 'tries': 1, 'sol': False}
+        _S['p'][k] = {'ok': ok, 't': time.time(), 'tries': 1, 'sol': False, 'sure': _sure(sure)}
         if ok: print('✓ Correct, first time.  solution(%d) shows a model answer - compare it with your own working.' % n)
+        elif _trap(q, ans, n, 'problem'): print('✗ This first attempt is recorded (and the mistake is logged). Redo it with the fix above, then check(%d, ...) again.' % n)
         else: print('✗ Not correct. This first attempt is recorded.\n  Next: re-check your working, then hint(%d). If still stuck: solution(%d).\n  Afterwards write one line: mistake(%d, "what went wrong")' % (n, n, n))
     else:
         rec['tries'] = rec.get('tries', 1) + 1
         if ok and not rec['ok']: rec['later'] = True
+        if not ok and _trap(q, ans, n, 'problem'): pass
         print(('✓ Correct now' if ok else '✗ Still not correct - try hint(%d)' % n) + '   (first attempt was ' + ('correct' if rec['ok'] else 'wrong') + ')')
     _save()
 
@@ -192,8 +218,9 @@ def solution(n, force=False):
 
 
 # ----------------------------------------------------------------- quick checks
-def ask(n, ans=None):
-    """Check yourself: unlimited tries, not graded. Explains the answer once you have it."""
+def ask(n, ans=None, sure=None):
+    """Check yourself: unlimited tries, not graded. Explains the answer once you have it.
+    Optional: sure=True / sure=False - how confident you were (report() uses it)."""
     k = str(n); q = _D['q'].get(k)
     if q is None: print('There is no check-yourself question', n); return
     if _blank(ans): print('Replace the ... with your answer, then run the cell again.'); return
@@ -202,9 +229,12 @@ def ask(n, ans=None):
     except Exception as err:
         print('I could not read that answer (%s). Expected format: %s' % (err, q['f'])); return
     rec = _S['q'].setdefault(k, {'ok': False, 'tries': 0}); rec['tries'] += 1
+    if rec['tries'] == 1: rec['first'], rec['sure'] = ok, _sure(sure)
     if ok:
         rec['ok'] = True
         _md('✓ **Right.** ' + q.get('why', ''))
+    elif _trap(q, ans, n, 'check-yourself'):
+        _md('Try again with that fixed.')
     else:
         nud = q.get('nudge', '')
         if rec['tries'] >= 3:
@@ -212,6 +242,40 @@ def ask(n, ans=None):
         else:
             _md('✗ Not yet. ' + (nud or 'Re-read the paragraph just above and try once more.'))
     _save()
+
+
+# ----------------------------------------------------------------- starting check (where are you starting?)
+def start(n, ans=None, sure=None):
+    """Starting-check question n: a quick test of what this notebook builds on. Only right/wrong - start_report() says what to review."""
+    k = str(n); q = (_D.get('s') or {}).get(k)
+    if q is None: print('There is no starting-check question', n); return
+    if _blank(ans): print('Replace the ... with your answer (a guess is fine - it tells you where to start), then run the cell again.'); return
+    try:
+        ok = bool(_correct(q['k'], ans, q['a']))
+    except Exception as err:
+        print('I could not read that answer (%s). Expected format: %s' % (err, q['f'])); return
+    _S['s'][k] = {'ok': ok, 'sure': _sure(sure), 't': time.time()}
+    print('✓ solid' if ok else '✗ noted - start_report() below tells you what to review')
+    _save()
+
+
+def start_report():
+    """What to review before reading on, from your starting-check answers."""
+    S = _D.get('s') or {}
+    done = [k for k in S if k in _S['s']]
+    if not done: print('Answer the starting-check questions above first (a guess is fine).'); return
+    miss = [k for k in S if k in _S['s'] and not _S['s'][k]['ok']]
+    shaky = [k for k in S if k in _S['s'] and _S['s'][k]['ok'] and _S['s'][k].get('sure') is False]
+    todo = [k for k in S if k not in _S['s']]
+    print('Starting check: %d/%d solid.' % (len(done) - len(miss), len(S)))
+    if not miss and not shaky:
+        print('Solid start: everything this notebook builds on is in place. Go straight on.')
+    for k in miss:
+        _md('✗ **Item %s** - review first: %s' % (k, S[k]['r']))
+    for k in shaky:
+        _md('~ **Item %s** - right, but you were unsure. Quick refresher: %s' % (k, S[k]['r']))
+    if miss: print('Fix these before Part 1: everything later is built on them. Then run the start(...) cells again.')
+    if todo: print('Not answered yet:', ', '.join(todo))
 
 
 # ----------------------------------------------------------------- error log and report
@@ -244,6 +308,15 @@ def report():
     peeked = [k for k in P if done.get(k, {}).get('sol')]
     if peeked: print('Solution opened before solving:', ', '.join(peeked), ' -> redo these on another day without the solution.')
     if s['drills']: print('Drills done: %d, average %.0f%%' % (s['drills'], 100 * sum(a / b for _, a, b in _S['drills']) / s['drills']))
+    if 'start' in s: print('Starting check: %d/%d solid.' % tuple(s['start']))
+    wrong_sure = ['problem ' + k for k in P if done.get(k, {}).get('sure') is True and not done[k]['ok']] + \
+                 ['check ' + k for k in _D['q'] if _S['q'].get(k, {}).get('sure') is True and not _S['q'][k].get('first', True)]
+    right_unsure = ['problem ' + k for k in P if done.get(k, {}).get('sure') is False and done[k]['ok']] + \
+                   ['check ' + k for k in _D['q'] if _S['q'].get(k, {}).get('sure') is False and _S['q'][k].get('first')]
+    if wrong_sure: print('Wrong but SURE (a misconception - fix these first, then redo them another day):', ', '.join(wrong_sure))
+    if right_unsure: print('Right but unsure (not yet obviously true - redo these on paper and explain why):', ', '.join(right_unsure))
+    auto = [m for m in _S['mistakes'] if m.get('auto')]
+    if auto: print('Known mistakes you made (logged automatically): %d - see mistakes()' % len(auto))
     if s['tried'] < s['n']: print('Still to attempt: %d problems.' % (s['n'] - s['tried']))
     elif s['got'] >= 0.8 * s['n']: print('>= 80% first time: this notebook is DONE. Move on.')
     else: print('Below 80% first time: redo the x problems on a different day, then move on once they are right.')

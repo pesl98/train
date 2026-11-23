@@ -1,6 +1,7 @@
 """Execute every generated notebook twice with a real kernel:
   1. as the student first sees it (all answers still '...')   -> must run without any error
-  2. with every answer filled in from the answer key           -> every check()/ask() must say it is right
+  2. with every answer filled in from the answer key           -> every check()/ask()/start() must say it is right,
+     and every known-mistake (trap) answer must trigger its targeted explanation
 usage:  python learn/tools/test_notebooks.py [book-id ...]"""
 import os, sys, tempfile
 import nbformat
@@ -36,12 +37,24 @@ def main():
         if want and b.id not in want: continue
         fails += run(b.notebook(), b.id + ' (blank)')
         nb = b.notebook(solved=True)
+        ntrap = 0
+        for kind, store, fn in (('q', b.Q, 'ask'), ('p', b.P, 'check')):
+            for k, q in store.items():
+                for val, _ in q.get('t') or []:
+                    nb.cells.append(nbformat.v4.new_code_cell('# trap\n%s(%s, %r)' % (fn, k, val))); ntrap += 1
         fails += run(nb, b.id + ' (solved)')
-        nq = np_ = 0
+        nq = np_ = ns = nt = 0
         for c in nb.cells:
             if c.cell_type != 'code': continue
             src, txt = c.source, text_of(c)
-            if src.startswith('ask('):
+            if src.startswith('# trap'):
+                nt += 1
+                if 'Known mistake' not in txt: fails.append('%s: trap not recognised: %s -> %s' % (b.id, src[7:70], txt[:160]))
+                continue
+            if src.startswith('start('):
+                ns += 1
+                if '✓' not in txt: fails.append('%s: %s -> %s' % (b.id, src[:70], txt[:160]))
+            elif src.startswith('ask('):
                 nq += 1
                 if '✓' not in txt: fails.append('%s: %s -> %s' % (b.id, src[:70], txt[:160]))
             elif src.startswith('check('):
@@ -50,8 +63,9 @@ def main():
             elif 'x' in src.split('=')[0].split() and src.strip().startswith(('x =', 't =')):
                 fails.append('%s: a cell overwrites the symbol x or t: %s' % (b.id, src[:60]))
         # every problem and question must have been exercised
-        if nq != len(b.Q) or np_ != len(b.P): fails.append('%s: ran %d/%d asks, %d/%d checks' % (b.id, nq, len(b.Q), np_, len(b.P)))
-        print('%-8s blank run ok, solved run: %d checks, %d asks' % (b.id, np_, nq))
+        if nq != len(b.Q) or np_ != len(b.P) or ns != len(b.S) or nt != ntrap:
+            fails.append('%s: ran %d/%d asks, %d/%d checks, %d/%d starts, %d/%d traps' % (b.id, nq, len(b.Q), np_, len(b.P), ns, len(b.S), nt, ntrap))
+        print('%-8s blank run ok, solved run: %d checks, %d asks, %d starts, %d traps' % (b.id, np_, nq, ns, nt))
     if fails:
         print('\nFAILURES\n' + '\n'.join(fails)); sys.exit(1)
     print('all notebooks pass')

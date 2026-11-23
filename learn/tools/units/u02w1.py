@@ -30,8 +30,25 @@ B.md(r'''
 
 **What is used from Unit 1:** limits and the "$\frac00$" techniques — expand, common denominator, conjugate (week 3, §2.2); function notation $f(a+h)$ (week 1, §1.1).
 
+**How this notebook works with you**
+- **Starting check** (right below): a few quick questions on what this week builds on. `start_report()` then tells you what to review first — never build on something that is not yet solid.
+- **Known mistakes:** many questions recognise the typical wrong answers. Give one, and you get an explanation of *that* mistake instead of a plain "not yet" — and it is logged for you (`mistakes()`).
+- **Confidence:** add `sure=True` or `sure=False` to any answer, e.g. `check(3, 4.5, sure=False)`. `report()` then lists *right but unsure* (not yet obvious — redo) and *wrong but sure* (a misconception — fix first).
+
 Run the grey *SETUP* cell first.
 ''')
+B.start([
+    (r'For $f(x)=x^2$, compute $f(3+h)-f(3)$ when $h=0.1$.', 'num', 0.61,
+     r'function notation: $f(3+h)$ means "put $3+h$ wherever $x$ stands" — **Unit 1 week 1, §1.1**. Here $(3.1)^2-9$.'),
+    (r'Expand $(3+h)^2=9+c\,h+h^2$. What is $c$?', 'num', 6,
+     r'expanding brackets: $(a+b)^2=a^2+2ab+b^2$ — the four-step method this week expands such brackets every time. Do five on paper.'),
+    (r'Write $\dfrac{1}{x^3}$ as a power $x^n$. What is $n$?', 'num', -3,
+     r'negative and fractional powers: $\frac1{x^n}=x^{-n}$, $\sqrt x=x^{1/2}$ — **Unit 1 week 1** (function families). Part 2 uses this for the power rule.'),
+    (r'Evaluate $\displaystyle\lim_{x\to2}\frac{x^2-4}{x-2}$.', 'num', 4,
+     r'"$\frac00$" limits: factor and cancel, $\frac{(x-2)(x+2)}{x-2}=x+2$ — **Unit 1 week 3, §2.2**. Every derivative this week is such a limit.'),
+    (r'What is the slope of the line through $(0,1)$ and $(2,7)$?', 'num', 3,
+     r'slope $=\frac{\Delta y}{\Delta x}$ — §1.1 below starts exactly there; read it slowly.'),
+])
 
 # =====================================================================================
 B.md(r'''
@@ -62,6 +79,7 @@ In words: *start at height $y_0$; for every unit you move away from $x_0$, add $
 B.ask(r'''A line passes through $(1,2)$ and $(4,11)$. What is its slope?''', 'num', 3,
       r'''$m=\dfrac{\Delta y}{\Delta x}=\dfrac{11-2}{4-1}=\dfrac93=3$.''',
       r'''Rise over run: $\dfrac{y_2-y_1}{x_2-x_1}$.''')
+B.traps([(1 / 3, r'Run over rise — upside down. Slope is **rise** (change in $y$) over **run** (change in $x$).')])
 
 B.md(r'''
 ## 1.2 The average rate of change of a curve
@@ -85,6 +103,7 @@ Nothing in that calculation was special to falling balls. Do it for any function
 B.ask(r'''For $f(x)=x^2$, what is the average rate of change from $x=1$ to $x=4$?''', 'num', 5,
       r'''$\dfrac{f(4)-f(1)}{4-1}=\dfrac{16-1}{3}=5$. It is the slope of the secant through $(1,1)$ and $(4,16)$.''',
       r'''$\dfrac{f(b)-f(a)}{b-a}$ with $a=1$, $b=4$.''')
+B.traps([(15, r'That is the change in $f$ only. A *rate* is change per unit of $x$: divide by $\Delta x=3$.')])
 
 # =====================================================================================
 B.md(r'''
@@ -154,6 +173,7 @@ B.ask(r'''Use the four steps to find $f'(2)$ for $f(x)=x^2$.''', 'num', 4,
 B.ask(r'''Use the four steps to find $f'(1)$ for $f(x)=3x^2+2$.''', 'num', 6,
       r'''(1) $3(1+h)^2+2=3+6h+3h^2+2$. (2) minus $f(1)=5$: $6h+3h^2$. (3) $6+3h$. (4) $6$. Notice the constant $+2$ cancelled in step 2: adding a constant does not change a slope.''',
       r'''$f(1+h)=3(1+h)^2+2$. Expand, subtract $f(1)=5$, divide by $h$.''')
+B.traps([(8, r'The $+2$ does not change as $x$ changes, so it contributes nothing to the slope: in step 2 it cancels in $f(1+h)-f(1)$.')])
 
 B.md(r'''
 ## 2.2 The tangent line
@@ -257,6 +277,7 @@ explore(tracker, a=(-2.2, 2.2, 0.1, -2.0))
 B.ask(r'''Do the four steps with a general $x$ for $f(x)=5x^2$. What is $f'(x)$?''', 'sym', '10*x',
       r'''(1) $5(x+h)^2=5x^2+10xh+5h^2$. (2) minus $5x^2$: $10xh+5h^2$. (3) $10x+5h$. (4) $10x$. The factor 5 simply came along: five times the function, five times the slope.''',
       r'''$f(x+h)=5(x+h)^2=5x^2+10xh+5h^2$. Subtract $5x^2$, divide by $h$, let $h\to0$.''', fmt="a formula in `x` as text, e.g. `'6*x'`")
+B.traps([('10*x**2', r'You brought the 2 down but did not lower the power. After the four steps only $10x\cdot h$ survives the division by $h$: the power drops by one.')])
 
 # =====================================================================================
 B.md(r'''
@@ -350,9 +371,12 @@ Reminders: $\dfrac{1}{x^n}=x^{-n}$, $\ \sqrt[q]{x^p}=x^{p/q}$, and "reduce the p
 B.ask(r'''Differentiate $f(x)=x^{10}$.''', 'sym', '10*x**9',
       r'''Power down in front, power reduced by 1: $10x^9$.''',
       r'''$\dfrac{d}{dx}[x^n]=n\,x^{n-1}$ with $n=10$.''', fmt="a formula in `x` as text, e.g. `'4*x**3'`")
+B.traps([('10*x**10', r'Bring the power down **and** lower it by one: $x^n\to nx^{n-1}$.')])
 B.ask(r'''Differentiate $f(x)=\dfrac{1}{x^2}$.''', 'sym', '-2/x**3',
       r'''Rewrite: $x^{-2}$. Power rule: $-2x^{-3}=-\dfrac{2}{x^3}$. (Reducing $-2$ by one gives $-3$.)''',
       r'''First write $\dfrac{1}{x^2}$ as $x^{-2}$, then apply the power rule with $n=-2$.''', fmt="a formula in `x` as text, e.g. `'-3/x**4'`")
+B.traps([('-2/x', r'$-2-1=-3$, not $-1$: $x^{-2}\to-2x^{-3}=-\frac{2}{x^3}$. Lowering a negative power makes it *more* negative.'),
+         ('2/x**3', r'Sign: the power $-2$ comes down as a factor, giving $-2x^{-3}$. ($\frac1{x^2}$ is falling for $x>0$, so the slope must be negative there.)')])
 
 B.md(r'''
 ## 3.6 Linearity: constants and sums
@@ -388,9 +412,11 @@ $$f'(x)=3\cdot\tfrac12x^{-1/2}-2\cdot(-2)x^{-3}=\frac{3}{2\sqrt{x}}+\frac{4}{x^3
 B.ask(r'''Differentiate $f(x)=2x^4-3x^2+5x-9$.''', 'sym', '8*x**3 - 6*x + 5',
       r'''Term by term: $2\cdot4x^3-3\cdot2x+5-0=8x^3-6x+5$.''',
       r'''Apply the power rule to each term and keep the constant factors. The derivative of the constant $-9$ is $0$.''', fmt="a formula in `x` as text")
+B.traps([('8*x**3 - 6*x - 4', r'The constant $-9$ is a horizontal line: slope 0. It disappears, it is not combined with the $5$.')])
 B.ask(r'''Differentiate $f(x)=6\sqrt{x}$ and give the value $f'(9)$.''', 'num', 1,
       r'''$6x^{1/2}\ \to\ 6\cdot\frac12x^{-1/2}=\dfrac{3}{\sqrt{x}}$. At $x=9$: $\dfrac33=1$.''',
       r'''$\sqrt{x}=x^{1/2}$, so the derivative is $6\cdot\frac12x^{-1/2}=\dfrac{3}{\sqrt{x}}$. Now put $x=9$.''')
+B.traps([(2, r'You missed the $\frac12$: $\sqrt x=x^{1/2}\to\frac12x^{-1/2}$, so $f\,^\prime(x)=\frac{3}{\sqrt x}$.')])
 
 # =====================================================================================
 B.md(r'''
@@ -450,6 +476,7 @@ B.md(r'''
 B.ask(r'''A stone is thrown up with $s(t)=30t-5t^2$ (metres, seconds). What is its velocity at $t=1$?''', 'num', 20,
       r'''$v(t)=s'(t)=30-10t$, so $v(1)=20$ m/s (still rising).''',
       r'''Differentiate $s(t)$ to get $v(t)$, then put $t=1$.''', fmt='m/s')
+B.traps([(25, r'That is the **position** $s(1)$. Velocity is the derivative: $v=s\,^\prime(t)=30-10t$.')])
 
 B.md(r'''
 ## 4.2 The tangent line as an approximation
@@ -492,6 +519,7 @@ That matches the figure in §2.3: a hill top at $x=-1$, a valley at $x=1$. Week 
 B.ask(r'''At which $x$ does $f(x)=x^2-6x+1$ have a horizontal tangent?''', 'num', 3,
       r'''$f'(x)=2x-6=0\Rightarrow x=3$. (Completing the square agrees: $(x-3)^2-8$ has its lowest point at $x=3$.)''',
       r'''Horizontal tangent means $f'(x)=0$. Differentiate and solve.''')
+B.traps([(-8, r'That is the height $f(3)$ of the point. The question asks *where*: the $x$-value with $f\,^\prime(x)=0$.')])
 
 # =====================================================================================
 B.md(r'''
@@ -526,6 +554,7 @@ The two sides disagree, so the limit — the derivative — **does not exist**. 
 B.ask(r'''For $f(x)=|x-3|$, what is the **right-hand** limit of the difference quotient at $x=3$, $\ \lim_{h\to0^+}\dfrac{f(3+h)-f(3)}{h}$?''', 'num', 1,
       r'''$f(3+h)=|h|$ and $f(3)=0$, so the quotient is $\dfrac{|h|}{h}=1$ for $h>0$. (From the left it is $-1$: a corner at $x=3$, no derivative there.)''',
       r'''$f(3+h)=|3+h-3|=|h|$. For positive $h$, $|h|=h$.''')
+B.traps([(-1, r'That is the left-hand side. For $h>0$, $|h|=h$, so the quotient is $\frac hh=1$.')])
 
 # =====================================================================================
 B.md(r'''
@@ -645,6 +674,8 @@ B.problem(S1, r"Use the **definition** (four steps) to find $f'(2)$ for $f(x)=3x
 4. $h\to0$: $\;f'(2)=$ **11**.
 
 *Check with the rules:* $f'(x)=6x-1$, so $f'(2)=11$ ✓.''')
+B.traps([(12, r'You lost the $-x$ term: it contributes $-h$ in step 2, i.e. $-1$ to the slope.'),
+         (10, r'That is $f(2)$, the height. The derivative is the limit of the difference quotient.')])
 B.problem(S1, r'Recognise this limit as a derivative and evaluate it without expanding: $\displaystyle\lim_{h\to0}\frac{(2+h)^5-32}{h}$.', 'num', 80,
           [r'Compare with $\dfrac{f(a+h)-f(a)}{h}$. What are $f$ and $a$? Note $32=2^5$.', r"It is $f'(2)$ for $f(x)=x^5$."],
           r'''With $f(x)=x^5$ and $a=2$: $f(a+h)=(2+h)^5$ and $f(a)=2^5=32$. So the limit is by definition $f'(2)$.
@@ -652,32 +683,40 @@ B.problem(S1, r'Recognise this limit as a derivative and evaluate it without exp
 Power rule: $f'(x)=5x^4$, so $f'(2)=5\cdot16=$ **80**.
 
 *(Expanding $(2+h)^5$ would also work, with much more effort. Recognising a limit as a derivative is a standard trick.)*''')
+B.traps([(32, r'$32=2^5$ is $f(2)$. The limit is the **slope** $f\,^\prime(2)$ of $x^5$: $5\cdot2^4$.')])
 B.problem(S1, r"Let $f(x)=\dfrac{1}{x}$. Using the result of §3.3, what is the slope of the tangent at $x=\tfrac12$?", 'num', -4,
           [r"$f'(x)=-\dfrac{1}{x^2}$."],
           r'''$f'(x)=-\dfrac{1}{x^2}$, so $f'\!\left(\tfrac12\right)=-\dfrac{1}{1/4}=$ **−4**. The curve $\frac1x$ is steep near the origin.''')
+B.traps([(4, r'Sign: $\frac1x$ falls everywhere, so its slope is negative: $-\frac{1}{x^2}$.'),
+         (-2, r'You forgot the square: $f\,^\prime(x)=-\frac{1}{x^2}$, and $(\frac12)^2=\frac14$.')])
 B.md(r'''
 ### Power rule and linearity
 ''')
 B.problem(S2, r'Differentiate $f(x)=4x^3-5x^2+7x-2$.', 'sym', '12*x**2 - 10*x + 7',
           [r'Term by term; constants stay as factors; the constant term disappears.'],
           r'''$$f'(x)=4\cdot3x^2-5\cdot2x+7\cdot1-0=12x^2-10x+7 .$$''', fmt="a formula in `x` as text")
+B.traps([('12*x**2 - 10*x + 5', r'The constant $-2$ has slope 0: it vanishes; do not subtract it from the 7.')])
 B.problem(S2, r'Differentiate $f(x)=3\sqrt{x}-\dfrac{2}{x^2}$.', 'sym', '3/(2*sqrt(x)) + 4/x**3',
           [r'Rewrite as powers: $3x^{1/2}-2x^{-2}$.', r'$3\cdot\frac12x^{-1/2}-2\cdot(-2)x^{-3}$. Watch the double minus.'],
           r'''Rewrite: $f(x)=3x^{1/2}-2x^{-2}$.
 $$f'(x)=3\cdot\tfrac12x^{-1/2}-2\cdot(-2)\,x^{-3}=\frac{3}{2\sqrt{x}}+\frac{4}{x^3}.$$
 You can type it as `'3/(2*sqrt(x)) + 4/x**3'` or `'1.5*x**(-0.5) + 4*x**(-3)'`.''', fmt="a formula in `x` as text, e.g. `'1/(2*sqrt(x)) - 3/x**2'`")
+B.traps([('3/(2*sqrt(x)) - 4/x**3', r'Double minus: $-2x^{-2}\to-2\cdot(-2)x^{-3}=+4x^{-3}$.')])
 B.problem(S2, r'Differentiate $f(x)=(x^2+3)^2$. (Expand first.)', 'sym', '4*x**3 + 12*x',
           [r'$(x^2+3)^2=x^4+6x^2+9$.'],
           r'''Expand: $(x^2+3)^2=x^4+6x^2+9$. Then
 $$f'(x)=4x^3+12x .$$
 *Not* $2(x^2+3)$ — that would ignore what is inside the bracket. (Next week's chain rule gives $2(x^2+3)\cdot2x=4x^3+12x$ directly.)''', fmt="a formula in `x` as text")
+B.traps([('2*x**2 + 6', r'You differentiated the outer square only, as if the bracket were $x$. Expand first ($x^4+6x^2+9$); next week the chain rule explains the missing factor $2x$.')])
 B.problem(S2, r'Differentiate $f(x)=\dfrac{x^4-2x^2+5x}{x}$. (Divide first.)', 'sym', '3*x**2 - 2',
           [r'Divide each term of the numerator by $x$.'],
           r'''Divide term by term: $f(x)=x^3-2x+5$ (for $x\ne0$). Then
 $$f'(x)=3x^2-2 .$$''', fmt="a formula in `x` as text")
+B.traps([('4*x**3 - 4*x + 5', r'You differentiated the numerator and ignored the $x$ underneath. Divide each term by $x$ first: $x^3-2x+5$.')])
 B.problem(S2, r'What is the slope of the tangent to $y=x^3-2x$ at $x=2$? *(From your diagnostic.)*', 'num', 10,
           [r"Differentiate, then put $x=2$."],
           r'''$\dfrac{dy}{dx}=3x^2-2$. At $x=2$: $3\cdot4-2=$ **10**.''')
+B.traps([(4, r'That is $y(2)$, the height. Slope means $\frac{dy}{dx}=3x^2-2$ at $x=2$.')])
 B.md(r'''
 ### Meaning and use
 ''')
@@ -688,11 +727,13 @@ B.problem(S3, r'The tangent to $y=\dfrac1x$ at $x=2$ crosses the $y$-axis at whi
 Tangent: $y=\frac12-\frac14(x-2)=1-\frac x4$.
 
 At $x=0$: $y=$ **1**.''')
+B.traps([(0.5, r'That is $f(2)$, the point of contact. Follow the tangent line to $x=0$: $y=\frac12-\frac14(0-2)$.')])
 B.problem(S3, r'At which points is the tangent to $y=x^3-12x$ horizontal? Give both $x$-values.', 'set', [-2, 2],
           [r"Horizontal means $\frac{dy}{dx}=0$."],
           r'''$\dfrac{dy}{dx}=3x^2-12=0\ \Rightarrow\ x^2=4\ \Rightarrow\ x=\pm2$.
 
 (At $x=-2$ the curve has a hill top, $y=16$; at $x=2$ a valley, $y=-16$.)''', fmt='a list, e.g. `[-1, 1]`')
+B.traps([([2], r'$3x^2=12$ gives $x^2=4$ — **two** solutions, $\pm2$.')])
 B.problem(S3, r'A ball is thrown up; its height is $s(t)=30t-5t^2$ metres. What is the **maximum height** it reaches?', 'num', 45,
           [r"At the top the velocity is zero. Find $v(t)=s'(t)$ and solve $v=0$.", r'$v=30-10t=0$ at $t=3$. Now compute $s(3)$.'],
           r'''**Velocity.** $v(t)=s'(t)=30-10t$.
@@ -700,6 +741,7 @@ B.problem(S3, r'A ball is thrown up; its height is $s(t)=30t-5t^2$ metres. What 
 **Top.** $v=0\Rightarrow t=3$ s.
 
 **Height.** $s(3)=90-45=$ **45 m**.''', fmt='metres')
+B.traps([(3, r'$t=3$ s is *when* it is highest. The height is $s(3)$.')])
 B.problem(S3, r'A particle moves with position $s(t)=t^3-6t^2+9t$ (metres, seconds). What is its **acceleration** at $t=3$?', 'num', 6,
           [r'Acceleration is the second derivative: differentiate twice.', r"$v=3t^2-12t+9$, $a=6t-12$."],
           r'''$v(t)=s'(t)=3t^2-12t+9$.
@@ -709,11 +751,13 @@ $a(t)=v'(t)=6t-12$.
 $a(3)=18-12=$ **6 m/s²**.
 
 (Interesting: $v(3)=27-36+9=0$. At $t=3$ the particle is momentarily at rest but accelerating — like the ball at the top of its flight.)''', fmt='m/s²')
+B.traps([(0, r'That is the **velocity** at $t=3$. Acceleration is the derivative of velocity: differentiate once more.')])
 B.problem(S3, r'Use the linear approximation at $a=16$ to estimate $\sqrt{16.4}$.', 'num', 4.05,
           [r"$f(a+h)\approx f(a)+f'(a)h$ with $f=\sqrt{x}$, $a=16$, $h=0.4$.", r"$f'(16)=\dfrac{1}{2\cdot4}=\dfrac18$."],
           r'''$f(16)=4$, $f'(x)=\dfrac{1}{2\sqrt{x}}$, $f'(16)=\dfrac18$, $h=0.4$.
 $$\sqrt{16.4}\approx4+\frac18\cdot0.4=4.05 .$$
 (True value: $4.04969\ldots$)''')
+B.traps([(4.4, r'You added $h=0.4$ itself. The tangent adds $f\,^\prime(16)\cdot h=\frac18\cdot0.4$.')])
 B.problem(S3, r'The radius of a metal disc is measured as $10$ cm with a possible error of $0.1$ cm. Use the linear approximation to estimate the possible error in the computed **area** $A=\pi r^2$ (in cm²).', 'num', 2 * math.pi,
           [r"$\Delta A\approx A'(r)\,\Delta r$.", r"$A'(r)=2\pi r$, so $\Delta A\approx2\pi\cdot10\cdot0.1$."],
           r'''$A(r)=\pi r^2$, so $A'(r)=2\pi r$.
@@ -724,6 +768,7 @@ Relative error: $\dfrac{6.28}{314.2}=2\%$ — twice the 1 % relative error in $r
 B.problem(S3, r'At which point of the parabola $y=x^2$ is the tangent parallel to the line $y=3x-1$? Give the $x$-coordinate.', 'num', 1.5,
           [r'Parallel lines have equal slopes. What is the slope of $y=3x-1$?', r'Solve $2x=3$.'],
           r'''The line has slope 3. The parabola has slope $\frac{dy}{dx}=2x$. Equal when $2x=3$: $x=$ **1.5** (the point $(1.5,\,2.25)$).''')
+B.traps([(3, r'3 is the required **slope**, not the $x$-value. Solve $2x=3$.')])
 B.md(r'''
 ### Existence and numerics
 ''')
@@ -734,10 +779,12 @@ B.problem(S4, r'For $f(x)=|x-3|$, what is the **left-hand** limit of the differe
 For $h<0$: $|h|=-h$, so the quotient is $\dfrac{-h}{h}=-1$. The left-hand limit is **−1**.
 
 The right-hand limit is $+1$; they differ, so $f$ has no derivative at 3 (a corner).''')
+B.traps([(1, r'For $h<0$, $|h|=-h$, so the quotient is $\frac{-h}{h}=-1$.')])
 B.problem(S4, r"Compute the **central difference** approximation to $f'(1)$ for $f(x)=x^3$ with $h=0.1$. (Exact arithmetic; the answer is not exactly 3.)", 'num', 3.01,
           [r'$\dfrac{f(1.1)-f(0.9)}{0.2}$.', r'$1.1^3=1.331$ and $0.9^3=0.729$.'],
           r'''$$\frac{f(1.1)-f(0.9)}{2\cdot0.1}=\frac{1.331-0.729}{0.2}=\frac{0.602}{0.2}=3.01 .$$
 The exact derivative is $3$; the error is $0.01=h^2$. In general for $x^3$ the central difference gives $3x^2+h^2$ (expand it and see): error proportional to $h^2$.''')
+B.traps([(3.31, r'That is the **forward** difference $\frac{f(1.1)-f(1)}{0.1}$. Central uses both sides: $\frac{f(1.1)-f(0.9)}{0.2}$.')])
 B.code(r'''
 # scratch cell: use Python as a calculator here
 ''')

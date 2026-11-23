@@ -20,8 +20,25 @@ B.md(r'''
 
 **Maths used:** algebra, right-angled triangles, $\sin$, $\cos$, $\tan$ and their inverses (Unit 1, weeks 1–2). Nothing else.
 
+**How this notebook works with you**
+- **Starting check** (right below): a few quick questions on what this week builds on. `start_report()` then tells you what to review first — never build on something that is not yet solid.
+- **Known mistakes:** many questions recognise the typical wrong answers. Give one, and you get an explanation of *that* mistake instead of a plain "not yet" — and it is logged for you (`mistakes()`).
+- **Confidence:** add `sure=True` or `sure=False` to any answer, e.g. `check(3, 4.5, sure=False)`. `report()` then lists *right but unsure* (not yet obvious — redo) and *wrong but sure* (a misconception — fix first).
+
 Run the grey *SETUP* cell first.
 ''')
+B.start([
+    (r'What is $\sin30^\circ$?', 'num', 0.5,
+     r'the exact values of sin and cos at 30°, 45°, 60° — **Unit 1 week 1, Part 3** (the unit circle and the two special triangles).'),
+    (r'A right-angled triangle has legs 6 and 8. How long is the hypotenuse?', 'num', 10,
+     r'Pythagoras, $c^2=a^2+b^2$ — **Unit 1 week 1, Part 3**. Vectors (Part 4 here) use it constantly.'),
+    (r'Simplify $(10^{-2})^3$. Give the number.', 'num', 1e-6,
+     r'powers of powers multiply: $(10^a)^b=10^{ab}$; so $(10^{-2})^3=10^{-6}$. Re-read the prefix table in §1.2 here with that in mind.', 'a number; you can type `1e-6`'),
+    (r'Solve $45=5t^2$ for $t>0$.', 'num', 3,
+     r'rearranging an equation: divide both sides by 5, then take the square root ($t^2=9$, $t=3$). Practise five of these on paper before Part 2.'),
+    (r'What is $\arctan(1)$ in degrees?', 'num', 45,
+     r'inverse trig — **Unit 1 week 2, Part 3**: $\arctan$ answers "which angle has this tangent?"; $\tan45^\circ=1$.', 'degrees'),
+])
 
 # =====================================================================================
 B.md(r'''
@@ -91,9 +108,12 @@ print(convert_to(joule, [kilogram, meter, second]))
 B.ask(r'''Convert 90 km/h to m/s.''', 'num', 25,
       r'''$90\times\frac{1000}{3600}=25$ m/s (or $90/3.6$).''',
       r'''Multiply by $\frac{1000\ \text{m}}{1\ \text{km}}$ and by $\frac{1\ \text{h}}{3600\ \text{s}}$.''', fmt='m/s')
+B.traps([(324, r'You **multiplied** by 3.6. Going from km/h to m/s you divide: a metre is 1000× smaller than a km (×1000), but a second is 3600× shorter than an hour (÷3600) — net ÷3.6. Sanity check: m/s numbers are smaller than km/h numbers.')])
 B.ask(r'''A battery delivers 0.25 A for one hour. How much charge (in coulombs) passes?''', 'num', 900,
       r'''$Q=It=0.25\ \text{A}\times3600\ \text{s}=900$ C.''',
       r'''$Q=I\,t$ with $t$ in seconds.''', fmt='coulombs')
+B.traps([(0.25, r'You used $t=1$ (hours). A coulomb is an ampere-**second**: convert the hour to 3600 s first.'),
+         (15, r'You used $t=60$ (minutes). A coulomb is an ampere-**second**: one hour is 3600 s.')])
 
 # =====================================================================================
 B.md(r'''
@@ -119,6 +139,7 @@ So $[v]=\mathsf{L\,T^{-1}}$, $[a]=\mathsf{L\,T^{-2}}$, $[F]=\mathsf{M\,L\,T^{-2}
 B.ask(r'''Which equation is dimensionally **wrong**? (a) $x=\tfrac12at^2$ (b) $v=at^2$ (c) $F=mv^2/r$ (d) $E=mgh$''', 'choice', 'b',
       r'''$[at^2]=\mathsf{L\,T^{-2}}\cdot\mathsf{T^2}=\mathsf{L}$ — a length, not a velocity. The others: (a) $\mathsf L$ ✓, (c) $\mathsf{M\,L^2T^{-2}/L}=\mathsf{M\,L\,T^{-2}}$ ✓, (d) $\mathsf{M\cdot L\,T^{-2}\cdot L}$ ✓.''',
       r'''Work out the dimension of the right-hand side of each.''')
+B.traps([('a', r'The $\tfrac12$ is a pure number — dimensions cannot see it. $[\tfrac12at^2]=\mathsf{L\,T^{-2}}\cdot\mathsf{T^2}=\mathsf L$, a length ✓. Check (b) the same way.')])
 
 B.md(r'''
 ## 2.3 Deriving a law from dimensions: the pendulum
@@ -172,6 +193,7 @@ B.md(r'''
 B.ask(r'''A pendulum of length 1 m has period 2.0 s. What is the period (s) of a 4 m pendulum in the same place?''', 'num', 4,
       r'''$T_p\propto\sqrt L$: $\sqrt4=2$ times longer, so 4.0 s.''',
       r'''$T_p=C\sqrt{L/g}$; only $L$ changes.''', fmt='seconds')
+B.traps([(8, r'You scaled the period like the length. But $T_p\propto\sqrt L$: four times the length gives $\sqrt4=2$ times the period.')])
 
 # =====================================================================================
 B.md(r'''
@@ -206,6 +228,7 @@ The last term is the product of two small numbers — much smaller still, drop i
 B.ask(r'''A ball's speed is measured as $v=5.0\pm0.1$ m/s. What is the relative uncertainty (in %) of its kinetic energy $\tfrac12mv^2$ (take $m$ exact)?''', 'num', 4,
       r'''$\frac{\Delta v}{v}=2\%$; squaring doubles it: 4 %.''',
       r'''For $x^n$ the relative uncertainty is $n$ times that of $x$.''', fmt='a number (percent)')
+B.traps([(2, r'That is the uncertainty of $v$, not of $v^2$. Squaring multiplies by itself, so the relative uncertainties add twice: $2\times2\%$.')])
 
 # =====================================================================================
 B.md(r'''
@@ -262,9 +285,13 @@ B.md(r'''
 ''')
 B.ask(r'''What is the magnitude of $\vec v=(-6,8)$?''', 'num', 10,
       r'''$\sqrt{36+64}=10$.''', r'''Pythagoras on the components.''')
+B.traps([(2, r'You added the components ($-6+8$). The magnitude is the length of the arrow: Pythagoras, $\sqrt{(-6)^2+8^2}$ — squares are never negative.'),
+         (14, r'You added the sizes of the components ($6+8$). The arrow is the hypotenuse of the triangle, not the two legs walked one after the other: use Pythagoras.')])
 B.ask(r'''A force of 20 N points at $120^\circ$ from the $+x$ axis. What is its $x$-component (N)?''', 'num', -10,
       r'''$20\cos120^\circ=20\cdot(-\tfrac12)=-10$ N — negative, because it points to the left.''',
       r'''$F_x=F\cos\theta$; the sign matters.''', fmt='newtons (with sign)')
+B.traps([(10, r'Right size, wrong sign. $\cos120^\circ=-\tfrac12$: the force points **left**, so $F_x$ is negative. Always sketch the arrow.'),
+         (-17.32, r'You used $\sin$. The $x$-component uses $\cos\theta$ ($\theta$ measured from the $+x$ axis); $\sin$ gives the $y$-component.')])
 
 B.md(r'''
 ## 4.4 Resolving a force on a slope
@@ -299,6 +326,7 @@ $$\vec a\cdot\vec b=a_xb_x+a_yb_y\qquad(\text{a scalar}).$$
 ''')
 B.ask(r'''$\vec a=(1,2)$ and $\vec b=(3,-1)$. What is $\vec a\cdot\vec b$?''', 'num', 1,
       r'''$1\cdot3+2\cdot(-1)=1$.''', r'''$a_xb_x+a_yb_y$.''')
+B.traps([(5, r'You lost the minus sign of $b_y$: $2\cdot(-1)=-2$, so $3+(-2)=1$.')])
 
 B.md(r'''
 ### Code it — the direction of a vector, in every quadrant
@@ -350,15 +378,20 @@ Paper first. First attempt counts. `hint(n)` → `solution(n)` → `mistake(n, '
 B.problem(S1, r'A car drives at 108 km/h. What is its speed in m/s?', 'num', 30,
           [r'Divide by 3.6 — or multiply by $\frac{1000}{3600}$.'],
           r'''$108\times\frac{1000\ \text{m}}{3600\ \text{s}}=$ **30 m/s**.''', fmt='m/s')
+B.traps([(388.8, r'You multiplied by 3.6. km/h → m/s means **dividing** by 3.6 (×1000 m/km, ÷3600 s/h).')])
 B.problem(S1, r'A light-year is the distance light travels in one year (365.25 days) at $c=3.00\times10^8$ m/s. How many metres is that?', 'num', 3e8 * 365.25 * 86400,
           [r'Seconds in a year: $365.25\times24\times3600$.', r'Distance $=$ speed × time.'],
           r'''$t=365.25\times86\,400=3.156\times10^7$ s. $d=3.00\times10^8\times3.156\times10^7\approx$ **$9.47\times10^{15}$ m**.''', fmt='metres; you can type `9.47e15`')
 B.problem(S1, r'Water has a density of 1.00 g/cm³. Express this in kg/m³.', 'num', 1000,
           [r'$1\ \text{cm}^3=(10^{-2}\ \text{m})^3$.', r'$1\ \text{g}=10^{-3}$ kg.'],
           r'''$1\ \frac{\text{g}}{\text{cm}^3}\times\frac{10^{-3}\ \text{kg}}{1\ \text{g}}\times\frac{1\ \text{cm}^3}{10^{-6}\ \text{m}^3}=$ **1000 kg/m³**. (The cube of the prefix is the usual trap.)''', fmt='kg/m³')
+B.traps([(0.001, r'Your conversion is upside down. A m³ holds a million cm³, so a m³ of water is much **heavier** than 1 g: the number in kg/m³ must be large.'),
+         (0.1, r'You converted cm → m but forgot the **cube**: $1\ \text{cm}^3=(10^{-2}\ \text{m})^3=10^{-6}\ \text{m}^3$, not $10^{-2}$.')])
 B.problem(S1, r'A 2 kW kettle runs for 3 minutes. How much energy does it use, in kilojoules?', 'num', 360,
           [r'Energy $=$ power × time, with time in seconds.'],
           r'''$E=Pt=2000\ \text{W}\times180\ \text{s}=360\,000$ J $=$ **360 kJ** (0.1 kWh).''', fmt='kJ')
+B.traps([(6, r'You used minutes. W × s = J: use $t=180$ s.'),
+         (360000, r'That is the energy in **joules**. The question asks for kilojoules: divide by 1000.')])
 B.md(r'''
 ### Dimensional analysis
 ''')
@@ -367,6 +400,7 @@ B.problem(S2, r'A spring with stiffness $k$ (unit N/m) carries a mass $m$. Suppo
           r'''$[k]=\mathsf{M\,L\,T^{-2}}/\mathsf L=\mathsf{M\,T^{-2}}$. So $\mathsf T=\mathsf M^{\alpha}\mathsf M^{\beta}\mathsf T^{-2\beta}$: $\beta=-\frac12$, $\alpha=\frac12$.
 
 $T_p=C\sqrt{m/k}$ (and $C=2\pi$ again — Unit 9). Answer **(0.5, −0.5)**.''', fmt='a tuple `(alpha, beta)`')
+B.traps([((-0.5, 0.5), r'Upside down: a heavier mass swings **slower** (longer period), a stiffer spring faster. Check the $\mathsf T$ equation: $[k^\beta]$ must supply $\mathsf T^{+1}$, so $-2\beta=1$.')])
 B.problem(S2, r'The speed of a wave on a string depends on the tension $F$ (N) and the mass per metre $\mu$ (kg/m): $v=C\,F^{a}\mu^{b}$. Find $(a,b)$.', 'tuple', (0.5, -0.5),
           [r'$[F]=\mathsf{M\,L\,T^{-2}}$, $[\mu]=\mathsf{M\,L^{-1}}$.', r'Three equations: $\mathsf M$: $a+b=0$; $\mathsf L$: $a-b=1$; $\mathsf T$: $-2a=-1$.'],
           r'''$\mathsf{L\,T^{-1}}=\mathsf{M}^{a+b}\mathsf{L}^{a-b}\mathsf{T}^{-2a}$. $\mathsf T$: $a=\frac12$; $\mathsf M$: $b=-\frac12$; $\mathsf L$: $\frac12+\frac12=1$ ✓ (a free check).
@@ -375,18 +409,22 @@ $v=C\sqrt{F/\mu}$ — tighter strings and lighter strings carry faster waves (an
 B.problem(S2, r'Air drag at high speed is $F=k\,v^2$. What is the unit of $k$? (a) kg/s (b) kg/m (c) kg·m/s (d) N·s', 'choice', 'b',
           [r'$k=F/v^2$; write N in base units.'],
           r'''$[k]=\frac{\mathsf{M\,L\,T^{-2}}}{\mathsf{L^2T^{-2}}}=\mathsf{M\,L^{-1}}$: **(b) kg/m**.''')
+B.traps([('a', r'kg/s belongs to a drag force that grows like $v$ ($F=bv$). Here $F=kv^2$: divide by $v^2$, not by $v$.')])
 B.problem(S2, r'In $x(t)=A\,e^{-t/\tau}\cos(\omega t)$, $x$ is in metres and $t$ in seconds. What is the unit of $\omega$? (a) s (b) 1/s (c) m/s (d) none', 'choice', 'b',
           [r'The argument of $\cos$ must be dimensionless.'],
           r'''$\omega t$ must be a pure number, so $[\omega]=\mathsf T^{-1}$: **(b) 1/s** (radians per second). Likewise $\tau$ is in seconds and $A$ in metres.''')
+B.traps([('a', r'Then $\omega t$ would have unit s² — but the argument of $\cos$ must be a pure number, so $\omega$ must cancel the seconds of $t$.')])
 B.md(r'''
 ### Estimates and uncertainty
 ''')
 B.problem(S3, r'A rectangle measures $10.0\pm0.2$ cm by $4.0\pm0.1$ cm. What is the relative uncertainty of its area, in percent?', 'num', 4.5,
           [r'Relative uncertainties add for a product.'],
           r'''$\frac{0.2}{10}+\frac{0.1}{4}=2\%+2.5\%=$ **4.5 %**.''', fmt='a number (percent)')
+B.traps([(0.3, r'You added the **absolute** uncertainties (0.2 + 0.1 cm). For a product, add the **relative** ones: $\frac{0.2}{10}+\frac{0.1}{4}$, then express in %.')])
 B.problem(S3, r'The volume of a sphere is $\frac43\pi r^3$. The radius is measured to $\pm1\%$. What is the relative uncertainty of the volume (%)?', 'num', 3,
           [r'A power $n$ multiplies the relative uncertainty by $n$; $\frac43\pi$ is exact.'],
           r'''$3\times1\%=$ **3 %**.''', fmt='a number (percent)')
+B.traps([(1, r'You forgot the power: $V\propto r^3$, so the relative uncertainty of $r$ counts **three** times.')])
 B.problem(S3, r'Estimate the number of seconds in a human lifetime of 80 years. Give the order of magnitude: the exponent $n$ in $10^n$.', 'num', 9,
           [r'One year is about $3\times10^7$ s.'],
           r'''$80\times3.2\times10^7\approx2.5\times10^9$ s: order of magnitude **9**.''', fmt='an integer')
@@ -396,21 +434,27 @@ B.md(r'''
 B.problem(S4, r'A velocity of 10 m/s points at $30^\circ$ above the $+x$ axis. Give its components $(v_x,v_y)$.', 'tuple', (10 * math.cos(math.pi / 6), 5),
           [r'$v_x=v\cos\theta$, $v_y=v\sin\theta$.'],
           r'''$v_x=10\cos30^\circ=8.66$, $v_y=10\sin30^\circ=5$: **(8.66, 5)** m/s.''', fmt='a tuple `(vx, vy)`')
+B.traps([((5, 10 * 0.8660254), r'Swapped: $v_x=v\cos\theta$ (adjacent side), $v_y=v\sin\theta$ (opposite side). At $30^\circ$ the arrow is mostly horizontal, so $v_x$ is the larger one.')])
 B.problem(S4, r'Give the magnitude and the direction (degrees from $+x$, between 0 and 360) of $\vec v=(-3,4)$.', 'tuple', (5, 180 - math.degrees(math.atan(4 / 3))),
           [r'Magnitude: Pythagoras.', r'Sketch it: it points up and to the left (second quadrant). $\arctan(4/3)=53.13^\circ$ is the angle with the $-x$ axis.'],
           r'''$|\vec v|=5$. The vector is in the second quadrant: $180^\circ-53.13^\circ=126.87^\circ$. **(5, 126.87)**.''', fmt='a tuple `(magnitude, degrees)`')
+B.traps([((5, -53.13), r'The quadrant trap: $\arctan$ answered $-53.13^\circ$, which points down-right. Your vector $(-3,4)$ points **up-left** (second quadrant): add $180^\circ$.')])
 B.problem(S4, r'Two forces act on a box: 12 N to the east and 5 N to the north. What single force (magnitude in N) has the same effect?', 'num', 13,
           [r'Add the vectors: $(12,5)$.'],
           r'''$\vec F=(12,5)$ N, $|\vec F|=\sqrt{144+25}=$ **13 N**, at $\arctan\frac5{12}=22.6^\circ$ north of east.''', fmt='newtons')
+B.traps([(17, r'You added the magnitudes. Perpendicular forces add like the sides of a right triangle: $\sqrt{12^2+5^2}$.')])
 B.problem(S4, r'A 4.0 kg box sits on a $25^\circ$ slope ($g=9.81$ m/s²). What is the component of its weight along the slope (N)?', 'num', 4 * 9.81 * math.sin(math.radians(25)),
           [r'$mg\sin\theta$.'],
           r'''$4.0\times9.81\times\sin25^\circ=39.24\times0.4226\approx$ **16.6 N**.''', fmt='newtons')
+B.traps([(4 * 9.81 * 0.9063078, r'You used $\cos$. Along the slope is $mg\sin\theta$ (check: flat ground, $\theta=0$, must give zero along the slope).')])
 B.problem(S4, r'What is the angle (degrees) between $\vec a=(2,1)$ and $\vec b=(1,3)$?', 'num', 45,
           [r'$\cos\varphi=\frac{\vec a\cdot\vec b}{|\vec a||\vec b|}$.', r'$\vec a\cdot\vec b=5$, $|\vec a|=\sqrt5$, $|\vec b|=\sqrt{10}$.'],
           r'''$\cos\varphi=\frac{5}{\sqrt5\sqrt{10}}=\frac{5}{\sqrt{50}}=\frac{1}{\sqrt2}$, so $\varphi=$ **45°**.''', fmt='degrees')
+B.traps([(0.7071, r'That is $\cos\varphi$. The question asks for the angle: take $\arccos$.')])
 B.problem(S4, r'Three ropes pull on a ring that does not move. Two of the forces are $(4,0)$ N and $(-1,3)$ N. Give the third force $(F_x,F_y)$.', 'tuple', (-3, -3),
           [r'At rest: the three forces add to zero.'],
           r'''$\vec F_3=-\big((4,0)+(-1,3)\big)=-(3,3)=$ **(−3, −3) N**.''', fmt='a tuple `(Fx, Fy)`')
+B.traps([((3, 3), r'That is the sum of the two given forces. The third must **cancel** it, so it points the opposite way: minus that sum.')])
 B.code(r'''
 # scratch cell
 ''')

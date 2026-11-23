@@ -37,6 +37,13 @@ Notes: edits you make in JupyterLite live in browser storage (use File > Downloa
 Each weekly notebook is written from first principles, in the same six steps per topic:
 **Why** (the question that forces the idea) → **Build** (numbered steps, each with its reason; no skipped algebra) → **Worked examples** (every line) → **Check yourself** (`ask(n, …)`: unlimited tries, explains the answer) → **Experiment** (predict → run → explain; sliders via `explore`, simulators embedded via `lab`) → **Problems** (`check(n, …)`: first attempt counts; `hint(n)` gives progressive hints, `solution(n)` the full worked solution).
 
+Three habits borrowed from the LearnHarness teaching method (probe first, never build on something shaky):
+- **Starting check** — `B.start([(text, kind, answer, review), …])` puts a few prerequisite questions at the top; the student answers with `start(n, …)` and `start_report()` says what to review before Part 1.
+- **Known mistakes** — `B.traps([(wrong_answer, explanation), …])` right after an `ask`/`problem`: that wrong answer gets a targeted explanation instead of "not yet", and is logged automatically. A trap that equals the right answer fails the build; the tests replay every trap.
+- **Confidence** — `check(n, ans, sure=False)` / `ask(…, sure=True)`; `report()` lists *wrong but sure* (misconceptions) and *right but unsure*.
+
+Pilots: `p01w1` (Physics 1) and `u02w1` (derivative from first principles).
+
 To add a notebook: copy a file in `learn/tools/units/`, add its module name to `UNITS` in `build_notebooks.py` and an entry in `learn/curriculum.js`. `test_notebooks.py` runs every notebook twice with a real kernel — untouched (must not raise) and with the answer key filled in (every `check`/`ask` must pass) — so a wrong answer key or a broken experiment cannot ship.
 
 Results are saved per notebook as `<id>-results.json` in the browser; the hub reads them and shows the scores on the course map. The labs accept deep links, e.g. `physics/index.html#exp=osc&F0=0&c=0`.
